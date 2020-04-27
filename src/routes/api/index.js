@@ -3,7 +3,7 @@ const router = express.Router();
 
 
 router.get('/', function(req,res){
-    res.sendFile(__dirname + "/Front/index.html");
+    res.send("Welcome");
 });
 
 router.use('/rooms', require('./rooms'))
