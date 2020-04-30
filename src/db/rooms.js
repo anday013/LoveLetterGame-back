@@ -3,9 +3,8 @@ const filename = './src/db/rooms.txt'
 
 const readAll = () => {
     try {
-        let text = fs.readFileSync(filename, { encoding: 'utf-8' });
-        fs.close();
         let result = [];
+        let text = fs.readFileSync(filename, { encoding: 'utf-8' });
         text.split(';').forEach(x => {
             if (x != "") result.push(JSON.parse(x));
         });
@@ -18,7 +17,6 @@ const readAll = () => {
 const write = (room) => {
     try {
         fs.appendFileSync(filename, ';' + JSON.stringify(room));
-        fs.close();
         return true;
     } catch (err) {
         console.error(err);

@@ -1,4 +1,4 @@
-class Game{
+module.exports = class Game{
     constructor(){
         this.players = []; //All players take place in game
         this.room = ''; //Room name
@@ -7,5 +7,9 @@ class Game{
 
     findPlayerByName(playerName){
         return this.players.find(p => p.name === playerName);
+    }
+
+    addPlayer(player){
+        this.players.push(player);
     }
 }

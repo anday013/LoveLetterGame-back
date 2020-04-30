@@ -32,7 +32,7 @@ module.exports = gameSckt = (io, socket) => {
 
 
     function initialActions(){
-        Game.players.push(currentPlayer)
+        newGame.addPlayer(currentPlayer)
         deck.prepareDeck(4);
     
         let drawedCard = deck.drawCard().setPlayerId(currentPlayer.id)
