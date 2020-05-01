@@ -1,11 +1,9 @@
-module.exports = gameSckt = (io, socket) => {
+module.exports = gameSckt = (io, socket, currentPlayer) => {
     const deck = require('../../services').deck;
-    const Player = require('../../models').Player;
     const move = require('../../services').move;
     const Game = require('../../models').Game;
 
     let newGame = new Game();
-    let currentPlayer = new Player('p' + newGame.players.length.toString(), 0, socket);
     
     initialActions();
 

@@ -5,6 +5,10 @@ module.exports = class Room{
         this.name = name;
         this.players = players;
         this.status = status;
-        this.maxPlayers;
+        this.maxPlayers = maxPlayers;
+    }
+
+    addPlayer(player){
+        this.players.push(player);
     }
 }

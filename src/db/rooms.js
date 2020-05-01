@@ -29,4 +29,26 @@ const find = (id) => {
 }
 
 
-module.exports = { readAll, write, find }
+const clean = () => {
+    fs.truncate(filename,0,() => {console.log("Done")})
+}
+
+
+const remove = async (id) =>{
+    let data = await fs.readFileSync(filename, 'utf-8');
+    let room = find(id);
+    if(room){    
+        let newValue = data.replace(new RegExp(JSON.stringify(room)), '');
+        await fs.writeFileSync(filename, newValue, 'utf-8');
+    }
+}
+
+
+const update = async (oldRoom, newRoom) => {
+    let data = await fs.readFileSync(filename, 'utf-8');
+    if(oldRoom && newRoom){    
+        let newValue = data.replace(new RegExp(JSON.stringify(oldRoom)), JSON.stringify(newRoom));
+        await fs.writeFileSync(filename, newValue, 'utf-8');
+    }
+}
+module.exports = { readAll, write, find, remove, update }

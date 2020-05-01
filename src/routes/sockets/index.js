@@ -1,18 +1,25 @@
+
+
 let sockets = {};
 sockets.init = (server) => {
     let io = require('socket.io').listen(server);
     let connections = [];
     const gameSckt = require('./gameSckt');
+    const roomSckt = require('./roomSckt');
+    const Player = require('../../models').Player;
     io.on("connection", function (socket) {
 
 
         connections.push(socket);
+
+    
+        let currentPlayer = new Player('p' + newGame.players.length.toString(), 0, socket);
         //Connected
         console.log("Connected: current number of players is %s", connections.length);
 
         //Game part
-        gameSckt(io, socket);
-
+        gameSckt(io, socket, currentPlayer);
+        roomSckt(io, socket, currentPlayer);
         //Disconnected
         socket.on("disconnect", function (data) {
             connections.splice(connections.indexOf(socket), 1);
