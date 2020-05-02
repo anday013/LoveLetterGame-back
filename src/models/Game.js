@@ -1,15 +1,12 @@
 module.exports = class Game{
-    constructor(){
-        this.players = []; //All players take place in game
-        this.room = ''; //Room name
-        this.activePlayers = []; //Players take part in current round
+    constructor(room){
+        this.players = room.players; //All players take place in game
+        this.room = room; //Room
+        this.activePlayers = room.players; //Players take part in current round
+        this.moveOrder = this.activePlayers[0].id;
     }
 
     findPlayerByName(playerName){
-        return this.players.find(p => p.name === playerName);
-    }
-
-    addPlayer(player){
-        this.players.push(player);
+        return this.activePlayers.find(p => p.name === playerName);
     }
 }

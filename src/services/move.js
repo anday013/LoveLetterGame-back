@@ -1,21 +1,20 @@
 const { guard, priest, baron, handmaid, prince, king, princess } = require('./cards');
 const deck = require('./').deck;
 let activeCard = null;
-let moveOrder = 0; // Order of move
 
 function move(game, card, currentPlayer, relatedInfoJSON) {
     try {
         let relatedInfoObj = convertToObj(relatedInfoJSON, game);
         relatedInfoObj.currentPlayer = currentPlayer;
 
-        if (game.players[moveOrder].socket.id == currentPlayer.socket.id
-            && card.playerID == game.players[moveOrder].id
+        if (game.activePlayers[game.moveOrder].socket.id == currentPlayer.socket.id
+            && card.playerID == game.activePlayers[game.moveOrder].id
             && deck.isExist(card)) {
 
             activeCard = card;
-            game.players[moveOrder].removeCard(card);
+            game.activePlayers[game.moveOrder].removeCard(card);
             cardSeperator(card, relatedInfoObj);
-            moveOrder = nextPlayer(moveOrder, game.players);
+            game.moveOrder = nextPlayer(game.moveOrder, game.activePlayers);
         }
         else {
             console.error("It's not your turn")

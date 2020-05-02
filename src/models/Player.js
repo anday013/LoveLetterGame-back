@@ -1,10 +1,10 @@
 const crypto = require('crypto');
 module.exports = class Player{
-    constructor(nickname, points, socket){
-        this.id = socket.id;
+    constructor(nickname, points, socketId){
+        this.id = socketId;
         this.nickname = nickname;
         this.points = points;
-        this.socket = socket;
+        this.socketId = socketId;
         this.cards = [];
         this.isProtected = false;
     }

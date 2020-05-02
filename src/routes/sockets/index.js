@@ -3,6 +3,7 @@
 let sockets = {};
 sockets.init = (server) => {
     let io = require('socket.io').listen(server);
+    let crypto = require("crypto");
     let connections = [];
     const gameSckt = require('./gameSckt');
     const roomSckt = require('./roomSckt');
@@ -13,12 +14,12 @@ sockets.init = (server) => {
         connections.push(socket);
 
     
-        let currentPlayer = new Player('p' + newGame.players.length.toString(), 0, socket);
+        let currentPlayer = new Player('player' + crypto.randomBytes(16).toString("hex"), 0, socket.id);
         //Connected
         console.log("Connected: current number of players is %s", connections.length);
 
         //Game part
-        gameSckt(io, socket, currentPlayer);
+        // gameSckt(io, socket, currentPlayer);
         roomSckt(io, socket, currentPlayer);
         //Disconnected
         socket.on("disconnect", function (data) {

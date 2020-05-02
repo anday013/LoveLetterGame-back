@@ -1,12 +1,23 @@
 const fs = require('fs');
 const filename = './src/db/rooms.txt'
+const Room = require('../models').Room;
+const Player = require('../models').Player;
 
 const readAll = () => {
     try {
         let result = [];
         let text = fs.readFileSync(filename, { encoding: 'utf-8' });
         text.split(';').forEach(x => {
-            if (x != "") result.push(JSON.parse(x));
+            if (x != "") {
+                let object = JSON.parse(x);
+                let room = new Room(object.name, object.status, object.maxPlayers)
+                room.id = object.id;
+                object.players.forEach(player => {
+                    const newPlayer = new Player(player.nickname, player.points, player.socketId);
+                    room.addPlayer(newPlayer);
+                })
+                result.push(room);
+            }
         });
         return result;
     } catch (error) {
@@ -30,25 +41,27 @@ const find = (id) => {
 
 
 const clean = () => {
-    fs.truncate(filename,0,() => {console.log("Done")})
+    fs.truncate(filename, 0, () => { console.log("Done") })
 }
 
 
-const remove = async (id) =>{
+const remove = async (id) => {
     let data = await fs.readFileSync(filename, 'utf-8');
     let room = find(id);
-    if(room){    
-        let newValue = data.replace(new RegExp(JSON.stringify(room)), '');
+    if (room) {
+        let newValue = data.replace(JSON.stringify(room), '');
         await fs.writeFileSync(filename, newValue, 'utf-8');
     }
 }
 
 
-const update = async (oldRoom, newRoom) => {
+const update =  async (oldRoom, newRoom) => {
     let data = await fs.readFileSync(filename, 'utf-8');
-    if(oldRoom && newRoom){    
-        let newValue = data.replace(new RegExp(JSON.stringify(oldRoom)), JSON.stringify(newRoom));
+    if (oldRoom && newRoom) {
+        let newValue = data.replace(JSON.stringify(oldRoom), JSON.stringify(newRoom));
         await fs.writeFileSync(filename, newValue, 'utf-8');
     }
 }
+
+
 module.exports = { readAll, write, find, remove, update }
