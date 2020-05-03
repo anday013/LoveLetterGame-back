@@ -1,15 +1,14 @@
 const { guard, priest, baron, handmaid, prince, king, princess } = require('./cards');
-const deck = require('./').deck;
 let activeCard = null;
 
-function move(game, card, currentPlayer, relatedInfoJSON) {
+function move(game, card, currentPlayer, relatedInfoJSON, allCards) {
     try {
         let relatedInfoObj = convertToObj(relatedInfoJSON, game);
         relatedInfoObj.currentPlayer = currentPlayer;
 
-        if (game.activePlayers[game.moveOrder].socket.id == currentPlayer.socket.id
+        if (game.activePlayers[game.moveOrder].socketId == currentPlayer.socketId
             && card.playerID == game.activePlayers[game.moveOrder].id
-            && deck.isExist(card)) {
+            && deck.isExist(card, allCards)) {
 
             activeCard = card;
             game.activePlayers[game.moveOrder].removeCard(card);
@@ -64,7 +63,7 @@ const cardSeperator = (card, relatedInfo) => {
 
 
 function nextPlayer(moveOrder, players) {
-    return moveOrder = (moveOrder + 1) % players.length;
+    return (moveOrder + 1) % players.length;
 }
 
 

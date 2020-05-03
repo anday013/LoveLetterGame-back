@@ -1,10 +1,10 @@
 const crypto = require('crypto');
 module.exports = class Card {
-    constructor(name, power, playerID){
+    constructor(name, power){
         this.id = crypto.randomBytes(16).toString("hex");
         this.name = name;
         this.power = power;
-        this.playerID = playerID;
+        this.playerID;
     }
     setPlayerId(playerID){
         this.playerID = playerID;

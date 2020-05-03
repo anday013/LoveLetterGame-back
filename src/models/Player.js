@@ -14,4 +14,7 @@ module.exports = class Player{
     removeCard(card){
         this.cards.splice(this.cards.indexOf(card), 1);
     }
+    setName(name){
+        this.nickname = name;
+    }
 }
