@@ -7,11 +7,11 @@ module.exports = gameSckt = (io, socket, currentPlayer, room) => {
 
     initialActions();
 
-
     /*
     * When player is turning
     */
-    socket.on('move', (card, relatedInfoJSON) => {
+    socket.on('make-turn', (card, relatedInfoJSON) => {
+        console.log("Moving");
         try {
             move(newGame, card, currentPlayer, relatedInfoJSON, allCards);
         } catch (error) {
@@ -20,35 +20,29 @@ module.exports = gameSckt = (io, socket, currentPlayer, room) => {
     });
 
 
-    socket.on('get mycards', (playerName) => {
-        sendPlayerCards(newGame.findPlayerByName(playerName));
+    socket.on('get mycards', (playerId) => {
+        console.log("get cards");
+        sendPlayerCards(newGame.findPlayerById(playerId.playerId));
     });
 
 
 
     function sendPlayerCards(player) {
         if (player) {
-            console.log("Cards sent")
             io.to(player.socketId).emit('my cards', player.cards);
         }
     }
-
-
+    /*
+    * Prepare card desk, send 1 card per each player and one more who turns
+    */
     function initialActions() {
-        // newGame.addPlayer(currentPlayer)
         let cardDeck = deck.prepareDeck(room.maxPlayers);
         allCards = cardDeck.slice();
         newGame.players.forEach(player => {
-            let drawedCard = cardDeck.drawCard().setPlayerId(player.id)
-            player.addCard(drawedCard);
+            player.addCard(deck.drawCard(cardDeck).setPlayerId(player.id));
+            if( player.id === newGame.moveOrderId)
+                player.addCard(deck.drawCard(cardDeck).setPlayerId(player.id));
             sendPlayerCards(player);
         });
-        io.to(newGame.moveOrderId)
-
-
     }
-
-
-
-
-} 
+};

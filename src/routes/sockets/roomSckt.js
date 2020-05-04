@@ -9,20 +9,25 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
         const roomId = req.roomId;
         const found_room = rooms.find(roomId);
         const nickName = req.nickName;
-        if (found_room) {
-            if (!found_room.isPlayerExist(currentPlayer.id) && found_room.status !== "Playing" && nickName) {
-                found_room.addPlayer(currentPlayer);
-                socket.emit("response", new Response("You've successfully entered to the room", 200, currentPlayer))
-            }
-            if (found_room.isFull() && found_room.status !== "Playing") {
-                found_room.status = "Playing";
-                console.log("Game started")
-                gameSckt(io, socket, currentPlayer, found_room);
+        if(!nickName)
+            socket.emit("response", new Response("Wrong nickname"));
+        else
+            if (found_room) {
+                if (!found_room.isPlayerExist(currentPlayer.id) && found_room.status !== "Playing" && nickName) {
+                    found_room.addPlayer(currentPlayer);
+                    currentPlayer.setName(nickName);
+                    socket.emit("response", new Response("You've successfully entered to the room", 200, currentPlayer))
+                }
+                if (found_room.isFull() && found_room.status !== "Playing") {
+                    found_room.status = "Playing";
+                    gameSckt(io, socket, currentPlayer, found_room);
 
+                }
+                rooms.update(rooms.find(roomId), found_room);
             }
-            rooms.update(rooms.find(roomId), found_room);
-        }
-    })
+            else
+                socket.emit("response", new Response("Wrong room id"));
+    });
 
 
     socket.on('get-rooms', () => {
@@ -53,4 +58,4 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
         else
             socket.emit('created-room', new Response("Wrong arguments"));
     });
-} 
+};

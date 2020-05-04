@@ -1,3 +1,5 @@
+const deck = require('./deck');
+
 const { guard, priest, baron, handmaid, prince, king, princess } = require('./cards');
 let activeCard = null;
 
@@ -6,8 +8,8 @@ function move(game, card, currentPlayer, relatedInfoJSON, allCards) {
         let relatedInfoObj = convertToObj(relatedInfoJSON, game);
         relatedInfoObj.currentPlayer = currentPlayer;
 
-        if (game.activePlayers[game.moveOrder].socketId == currentPlayer.socketId
-            && card.playerID == game.activePlayers[game.moveOrder].id
+        if (game.activePlayers[game.moveOrder].socketId === currentPlayer.socketId
+            && card.playerID === game.activePlayers[game.moveOrder].id
             && deck.isExist(card, allCards)) {
 
             activeCard = card;
@@ -70,11 +72,9 @@ function nextPlayer(moveOrder, players) {
 function convertToObj(jsonFormat, game) {
     let obj = JSON.parse(jsonFormat);
     return {
-        targetPlayer: game.findPlayerByName(obj.targetPlayerName),
-        guessedCard: obj.guessedCardName
+        targetPlayer: (targetPlayerId in obj) ? game.findPlayerByName(obj.targetPlayerId): null,
+        guessedCard: (guessedCardName in obj) ? obj.guessedCardName: null
     }
-
-
 }
 
 module.exports = move
