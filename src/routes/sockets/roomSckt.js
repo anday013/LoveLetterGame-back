@@ -3,7 +3,6 @@ const rooms = require('../../db').rooms;
 const Response = require('../../models').Response;
 const gameSckt = require('./gameSckt');
 
-
 module.exports = roomSckt = (io, socket, currentPlayer) => {
 
     socket.on('enter-room', (req) => {
@@ -14,34 +13,42 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
             socket.emit("response", new Response("Wrong nickname"));
         else
             if (found_room) {
-                if (!found_room.isPlayerExist(currentPlayer.id) && found_room.status !== "Playing" && nickName) {
-                    found_room.addPlayer(currentPlayer);
-                    currentPlayer.setName(nickName);
-                    socket.emit("response", new Response("You've successfully entered to the room", 200, currentPlayer))
-                }
-                if (found_room.isFull() && found_room.status !== "Playing") {
-                    found_room.status = "Playing";
-                    gameSckt(io, socket, currentPlayer, found_room);
-
-                }
+                
+                roomPlayerCheck(found_room);
+                startGameFlag(found_room);
                 rooms.update(rooms.find(roomId), found_room);
             }
             else
                 socket.emit("response", new Response("Wrong room id"));
     });
 
+    const startGameFlag = room => {
+        if (room.isFull() && room.status !== "Playing") {
+            room.status = "Playing";
+            gameSckt(io, socket, currentPlayer, room);
+
+        }
+    };
+    const roomPlayerCheck = room => {
+        if (!room.isPlayerExist(currentPlayer.id) && room.status !== "Playing" && nickName) {
+            room.addPlayer(currentPlayer);
+            currentPlayer.setName(nickName);
+            socket.emit("response", new Response("You've successfully entered to the room", 200, currentPlayer))
+            socket.emit("update-room", new Response("", 200, room.players))
+        }
+    }
 
     socket.on('get-rooms', () => {
         sendWaitingRooms();
     });
 
-    socket.on('get-room', (idObj) => {
-        const found_room = rooms.find(idObj.id);
-        if (found_room)
-            socket.emit('receive-room', new Response("Done", 200, found_room));
-        else
-            socket.emit('receive-room', new Response());
-    });
+    // socket.on('get-room', (idObj) => {
+    //     const found_room = rooms.find(idObj.id);
+    //     if (found_room)
+    //         socket.emit('receive-room', new Response("Done", 200, found_room));
+    //     else
+    //         socket.emit('receive-room', new Response());
+    // });
 
 
     socket.on('new-room', (req) => {
