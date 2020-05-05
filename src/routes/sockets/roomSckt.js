@@ -32,8 +32,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
 
 
     socket.on('get-rooms', () => {
-        const waitingRooms = rooms.readAll().filter(r => r.status !== "Playing");
-        socket.emit('receive-rooms', new Response("Done", 200, waitingRooms))
+        sendWaitingRooms();
     });
 
     socket.on('get-room', (idObj) => {
@@ -52,9 +51,16 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
             let createdRoom = new Room(roomName, 'Waiting', maxPlayers);
             rooms.write(createdRoom);
             socket.emit('created-room', new Response("Done", 200, createdRoom));
-            socket.emit('receive-room', new Response("Done", 200, createdRoom));
+            sendWaitingRooms();
         }
         else
             socket.emit('created-room', new Response("Wrong arguments"));
     });
+
+    const sendWaitingRooms = () => {
+        const waitingRooms = rooms.readAll().filter(r => r.status !== "Playing");
+        socket.emit('receive-rooms', new Response("Done", 200, waitingRooms))
+    }
 };
+
+
