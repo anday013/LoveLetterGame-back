@@ -3,7 +3,7 @@ const router = express.Router();
 const Room = require('../../models').Room;
 const rooms = require('../../db').rooms;
 const Response = require('../../models').Response;
-
+const io = require
 
 router.get('/', (req, res) =>{
     res.send(new Response("Done", 200 , rooms.readAll()));

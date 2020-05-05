@@ -36,8 +36,8 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
         socket.emit('receive-rooms', new Response("Done", 200, waitingRooms))
     });
 
-    socket.on('get-room', (id) => {
-        const found_room = rooms.find(id);
+    socket.on('get-room', (idObj) => {
+        const found_room = rooms.find(idObj.id);
         if (found_room)
             socket.emit('receive-room', new Response("Done", 200, found_room));
         else
@@ -52,6 +52,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
             let createdRoom = new Room(roomName, 'Waiting', maxPlayers);
             rooms.write(createdRoom);
             socket.emit('created-room', new Response("Done", 200, createdRoom));
+            socket.emit('receive-room', new Response("Done", 200, createdRoom));
         }
         else
             socket.emit('created-room', new Response("Wrong arguments"));
