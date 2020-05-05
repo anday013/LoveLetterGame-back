@@ -5,6 +5,7 @@ const gameSckt = require('./gameSckt');
 
 
 module.exports = roomSckt = (io, socket, currentPlayer) => {
+
     socket.on('enter-room', (req) => {
         const roomId = req.roomId;
         const found_room = rooms.find(roomId);
@@ -47,13 +48,10 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
     socket.on('new-room', (req) => {
         const roomName = req.roomName;
         const maxPlayers = req.maxPlayers;
-        const nickName = req.nickName;
-        if (roomName && maxPlayers && nickName) {
+        if (roomName && maxPlayers) { 
             let createdRoom = new Room(roomName, 'Waiting', maxPlayers);
-            createdRoom.addPlayer(currentPlayer);
             rooms.write(createdRoom);
-            currentPlayer.setName(nickName);
-            socket.emit('created-room', new Response("Done", 200, { createdRoom, currentPlayer }));
+            socket.emit('created-room', new Response("Done", 200, createdRoom));
         }
         else
             socket.emit('created-room', new Response("Wrong arguments"));

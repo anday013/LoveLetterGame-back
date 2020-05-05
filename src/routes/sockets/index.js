@@ -12,7 +12,7 @@ sockets.init = (server) => {
 
 
         connections.push(socket);
-
+        console.log("Current user socket id: " + socket.id)
     
         let currentPlayer = new Player('player' + crypto.randomBytes(16).toString("hex"), 0, socket.id);
         //Connected
