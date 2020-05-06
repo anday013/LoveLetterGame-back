@@ -14,7 +14,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
         else
             if (found_room) {
                 
-                roomPlayerCheck(found_room);
+                roomPlayerCheck(found_room, nickName);
                 startGameFlag(found_room);
                 rooms.update(rooms.find(roomId), found_room);
             }
@@ -29,7 +29,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
 
         }
     };
-    const roomPlayerCheck = room => {
+    const roomPlayerCheck = (room, nickName) => {
         if (!room.isPlayerExist(currentPlayer.id) && room.status !== "Playing" && nickName) {
             room.addPlayer(currentPlayer);
             currentPlayer.setName(nickName);
