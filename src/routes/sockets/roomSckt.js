@@ -13,7 +13,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
             socket.emit("response", new Response("Wrong nickname"));
         else
             if (found_room) {
-                
+                socket.join(found_room.name);
                 roomPlayerCheck(found_room, nickName);
                 startGameFlag(found_room);
                 rooms.update(rooms.find(roomId), found_room);
@@ -34,7 +34,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
             room.addPlayer(currentPlayer);
             currentPlayer.setName(nickName);
             socket.emit("response", new Response("You've successfully entered to the room", 200, currentPlayer))
-            socket.emit("update-room", new Response("", 200, room.players))
+            io.to(room.name).emit("update-room", new Response("", 200, room.players))
         }
     }
 
