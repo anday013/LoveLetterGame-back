@@ -10,7 +10,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
         const found_room = rooms.find(roomId);
         const nickName = req.nickName;
         if(!nickName)
-            socket.emit("response", new Response("Wrong nickname"));
+            socket.emit("room-response", new Response("Wrong nickname"));
         else
             if (found_room) {
                 socket.join(found_room.name);
@@ -19,7 +19,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
                 rooms.update(rooms.find(roomId), found_room);
             }
             else
-                socket.emit("response", new Response("Wrong room id"));
+                socket.emit("room-response", new Response("Wrong room id"));
     });
 
     const startGameFlag = room => {
@@ -33,7 +33,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
         if (!room.isPlayerExist(currentPlayer.id) && room.status !== "Playing" && nickName) {
             room.addPlayer(currentPlayer);
             currentPlayer.setName(nickName);
-            socket.emit("response", new Response("You've successfully entered to the room", 200, currentPlayer))
+            socket.emit("room-response", new Response("You've successfully entered to the room", 200, currentPlayer))
             io.to(room.name).emit("update-room", new Response("", 200, room.players))
         }
     }

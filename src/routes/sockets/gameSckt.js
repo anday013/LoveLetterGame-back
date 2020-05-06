@@ -2,6 +2,7 @@ module.exports = gameSckt = (io, socket, currentPlayer, room) => {
     const deck = require('../../services').deck;
     const move = require('../../services').move;
     const Game = require('../../models').Game;
+    const Response = require('../../models').Response;
     let allCards = [];
     let newGame = new Game(room);
 
@@ -29,7 +30,7 @@ module.exports = gameSckt = (io, socket, currentPlayer, room) => {
 
     function sendPlayerCards(player) {
         if (player) {
-            io.to(player.socketId).emit('my cards', player.cards);
+            io.to(player.socketId).emit('my-cards', new Response("Your cards...", 200, player.cards));
         }
     }
     /*
@@ -38,11 +39,21 @@ module.exports = gameSckt = (io, socket, currentPlayer, room) => {
     function initialActions() {
         let cardDeck = deck.prepareDeck(room.maxPlayers);
         allCards = cardDeck.slice();
+        
+        if(room.maxPlayers == 2) 
+             twoPlayerMod(cardDeck);
+       
+
         newGame.players.forEach(player => {
             player.addCard(deck.drawCard(cardDeck).setPlayerId(player.id));
             if( player.id === newGame.moveOrderId)
                 player.addCard(deck.drawCard(cardDeck).setPlayerId(player.id));
             sendPlayerCards(player);
         });
+    }
+
+    function twoPlayerMod(cardDeck){
+        for (let i = 0; i < 3; i++) 
+            deck.drawCard(cardDeck)
     }
 };
