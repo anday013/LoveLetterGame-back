@@ -42,6 +42,8 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
         sendWaitingRooms();
     });
 
+    function isNumber(n) { return /^-?[\d.]+(?:e-?\d+)?$/.test(n); } 
+
     // socket.on('get-room', (idObj) => {
     //     const found_room = rooms.find(idObj.id);
     //     if (found_room)
@@ -54,7 +56,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
     socket.on('new-room', (req) => {
         const roomName = req.roomName;
         const maxPlayers = req.maxPlayers;
-        if (roomName && maxPlayers) { 
+        if (roomName && maxPlayers && isNumber(maxPlayers)) { 
             let createdRoom = new Room(roomName, 'Waiting', maxPlayers);
             rooms.write(createdRoom);
             socket.emit('created-room', new Response("Done", 200, createdRoom));
