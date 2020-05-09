@@ -1,15 +1,16 @@
 const Room = require('../../models').Room;
 const rooms = require('../../db').rooms;
 const Response = require('../../models').Response;
-const gameSckt = require('./gameSckt');
+const gameFunctions = require('./gameFunctions')
+const move = require('../../services').move;
+const games = [];
 
 module.exports = roomSckt = (io, socket, currentPlayer) => {
-
     socket.on('enter-room', (req) => {
         const roomId = req.roomId;
         const found_room = rooms.find(roomId);
         const nickName = req.nickName;
-        if(!nickName)
+        if (!nickName)
             socket.emit("room-response", new Response("Wrong nickname"));
         else
             if (found_room) {
@@ -25,8 +26,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
     const startGameFlag = room => {
         if (room.isFull() && room.status !== "Playing") {
             room.status = "Playing";
-            gameSckt(io, socket, currentPlayer, room);
-
+            games.push(gameFunctions.initializeGame(io, room));
         }
     };
     const roomPlayerCheck = (room, nickName) => {
@@ -42,7 +42,57 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
         sendWaitingRooms();
     });
 
-    function isNumber(n) { return /^-?[\d.]+(?:e-?\d+)?$/.test(n); } 
+
+
+
+
+    socket.on('make-turn', (card, relatedInfo) => {
+        try {
+            const moveResult = move(findGame(card), card, currentPlayer, relatedInfo);
+            let moveResponse;
+            if(moveResult === "Success")
+                moveResponse = new Response(moveResult, 200, {});
+            else if(moveResult === "It's not your turn")
+                moveResponse = new Response(moveResult);
+            io.to(currentPlayer.socketId).emit('turn-result', moveResponse);
+        } catch (error) {
+            console.error(error)
+        }
+    });
+
+
+    socket.on('get-mycards', (playerId) => {
+        gameFunctions.sendPlayerCards(newGame.findPlayerById(playerId.playerId), io);
+    });
+
+
+
+    function findGame(card){
+        let foundGame;
+        games.forEach(g => {
+            if(g.allCards.find(c => c.id === card.id)){
+                foundGame = g;
+            }
+        });
+        return foundGame;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function isNumber(n) { return /^-?[\d.]+(?:e-?\d+)?$/.test(n); }
 
     // socket.on('get-room', (idObj) => {
     //     const found_room = rooms.find(idObj.id);
@@ -56,7 +106,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
     socket.on('new-room', (req) => {
         const roomName = req.roomName;
         const maxPlayers = req.maxPlayers;
-        if (roomName && maxPlayers && isNumber(maxPlayers)) { 
+        if (roomName && maxPlayers && isNumber(maxPlayers)) {
             let createdRoom = new Room(roomName, 'Waiting', maxPlayers);
             rooms.write(createdRoom);
             socket.emit('created-room', new Response("Done", 200, createdRoom));
@@ -70,6 +120,10 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
         const waitingRooms = rooms.readAll().filter(r => r.status !== "Playing");
         socket.emit('receive-rooms', new Response("Done", 200, waitingRooms))
     }
+
+
+
+
 };
 
 

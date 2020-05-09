@@ -3,22 +3,34 @@ const deck = require('./deck');
 const { guard, priest, baron, handmaid, prince, king, princess } = require('./cards');
 let activeCard = null;
 
-function move(game, card, currentPlayer, relatedInfoJSON, allCards) {
+/*
+ * Handle player turnings
+ * Arguments: 
+ *      game - current game
+ *      card - turned card
+ *      currentPlayer - turning player
+ *      relatedInfoObj - extra information for player card (if needed)
+ * Return: (String)
+ *      Success - if everything ok
+ *      (Error message) - else
+*/
+function move(game, card, currentPlayer, relatedInfoObj) {
     try {
-        let relatedInfoObj = convertToObj(relatedInfoJSON, game);
         relatedInfoObj.currentPlayer = currentPlayer;
 
-        if (game.activePlayers[game.moveOrder].socketId === currentPlayer.socketId
-            && card.playerID === game.activePlayers[game.moveOrder].id
-            && deck.isExist(card, allCards)) {
+        if (game.turningPlayer().socketId === currentPlayer.socketId
+            && card.playerID === game.turningPlayer().id
+            && deck.isExist(card, game.allCards)) {
 
             activeCard = card;
-            game.activePlayers[game.moveOrder].removeCard(card);
+            game.turningPlayer().removeCard(card);
             cardSeperator(card, relatedInfoObj);
-            game.moveOrder = nextPlayer(game.moveOrder, game.activePlayers);
+            game.moveOrderId = nextPlayerId(game.moveOrderId, game.activePlayers);
+            return "Success";
         }
         else {
-            console.error("It's not your turn")
+            console.error("It's not your turn");
+            return "It's not your turn";
         }
     } catch (error) {
         console.error(error)
@@ -26,7 +38,13 @@ function move(game, card, currentPlayer, relatedInfoJSON, allCards) {
 
 }
 
-
+/*
+ * Handle cards and call appropirate function
+ * Arguments:
+ *      card - turned card
+ *      relatedInfoObj - extra information for player card (if needed)
+ * Return: (Void)
+*/
 const cardSeperator = (card, relatedInfo) => {
     try {
         switch (card.name) {
@@ -64,17 +82,19 @@ const cardSeperator = (card, relatedInfo) => {
 }
 
 
-function nextPlayer(moveOrder, players) {
-    return (moveOrder + 1) % players.length;
+
+/*
+ * Return next turning player id
+ * Arguments:
+ *      moveOrderId - last turned player id
+ *      players - players participating in game
+ * Return: (int)
+ *      Id of next player
+*/
+function nextPlayerId(moveOrderId, players) {
+    return players[(players.findIndex(p => p.id === moveOrderId) + 1) % players.length].id;
 }
 
 
-function convertToObj(jsonFormat, game) {
-    let obj = JSON.parse(jsonFormat);
-    return {
-        targetPlayer: (targetPlayerId in obj) ? game.findPlayerByName(obj.targetPlayerId): null,
-        guessedCard: (guessedCardName in obj) ? obj.guessedCardName: null
-    }
-}
 
 module.exports = move

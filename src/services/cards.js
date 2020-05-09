@@ -3,8 +3,9 @@ const deck = require('./').deck;
 * If guessed card is exist in target player returns true, otherwise false
 */
 function guard(targetPlayer, guessedCard) {
-    if (targetPlayer.cards.find(c => c.name == guessedCard.name))
+    if (targetPlayer.cards.find(c => c.name == guessedCard.name)){
         return true;
+    }
     return false;
 }
 
