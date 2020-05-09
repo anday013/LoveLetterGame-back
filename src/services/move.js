@@ -19,7 +19,7 @@ function move(game, card, currentPlayer, relatedInfoObj) {
         relatedInfoObj.currentPlayer = currentPlayer;
 
         if (game.turningPlayer().socketId === currentPlayer.socketId
-            && card.playerID === game.turningPlayer().id
+            && game.turningPlayer().isCardMine(card)
             && deck.isExist(card, game.allCards)) {
 
             activeCard = card;

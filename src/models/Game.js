@@ -5,6 +5,7 @@ module.exports = class Game{
         this.activePlayers = room.players; //Players take part in current round
         this.moveOrderId = this.activePlayers[0].id; // Player move order detector
         this.allCards = []; // All cards exist in current game
+        this.cardDeck = []; // Card deck of game
     }
 
     findPlayerByName(playerName){
@@ -16,4 +17,5 @@ module.exports = class Game{
     turningPlayer(){
         return this.findPlayerById(this.moveOrderId);
     }
+    
 }

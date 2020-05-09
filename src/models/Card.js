@@ -4,10 +4,10 @@ module.exports = class Card {
         this.id = crypto.randomBytes(16).toString("hex");
         this.name = name;
         this.power = power;
-        this.playerID;
+        this.playerId;
     }
-    setPlayerId(playerID){
-        this.playerID = playerID;
+    setPlayerId(playerId){
+        this.playerId = playerId;
         return this;
     }
     

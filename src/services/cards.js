@@ -43,7 +43,7 @@ function handmaid(currentPlayer) {
 
 function prince(targetPlayer) {
     discardHand(targetPlayer);
-    targetPlayer.addCard(cardDeck.drawCard().setPlayerId(targetPlayer.id))
+    targetPlayer.addCard(cardDeck.drawCardFromDeck().setPlayerId(targetPlayer.id))
 }
 
 function discardHand(targetPlayer) {

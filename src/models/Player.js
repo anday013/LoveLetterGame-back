@@ -17,4 +17,7 @@ module.exports = class Player{
     setName(name){
         this.nickname = name;
     }
+    isCardMine(card){
+        return card.playerId === this.id
+    }
 }

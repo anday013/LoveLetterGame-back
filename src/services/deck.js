@@ -67,7 +67,7 @@ const prepareDeck = (numOfPlayers) => {
  * Return top card from card desk
  * until there is card otherwise null
  */
-function drawCard(cardDeck) {
+function drawCardFromDeck(cardDeck) {
     try {
         return cardDeck.pop();
     } catch (error) {
@@ -96,6 +96,6 @@ function isExist(card, allCards) {
 
 
 
-module.exports = { prepareDeck, drawCard, isExist };
+module.exports = { prepareDeck, drawCardFromDeck, isExist };
 
 

@@ -48,10 +48,13 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
 
     socket.on('make-turn', (card, relatedInfo) => {
         try {
-            const moveResult = move(findGame(card), card, currentPlayer, relatedInfo);
+            const currentGame = findGame(card);
+            const moveResult = move(currentGame, card, currentPlayer, relatedInfo);
             let moveResponse;
-            if(moveResult === "Success")
+            if(moveResult === "Success"){
                 moveResponse = new Response(moveResult, 200, {});
+                gameFunctions.nextStep(currentGame, currentGame.cardDeck, io);
+            }
             else if(moveResult === "It's not your turn")
                 moveResponse = new Response(moveResult);
             io.to(currentPlayer.socketId).emit('turn-result', moveResponse);
@@ -61,9 +64,9 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
     });
 
 
-    socket.on('get-mycards', (playerId) => {
-        gameFunctions.sendPlayerCards(newGame.findPlayerById(playerId.playerId), io);
-    });
+    // socket.on('get-mycards', (playerId) => {
+    //     gameFunctions.sendPlayerCards(newGame.findPlayerById(playerId.playerId), io);
+    // });
 
 
 
