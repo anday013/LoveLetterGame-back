@@ -6,6 +6,7 @@ module.exports = class Player{
         this.points = points;
         this.socketId = socketId;
         this.cards = [];
+        this.discardedCards = [];
         this.isProtected = false;
     }
     addCard(card){
@@ -13,6 +14,7 @@ module.exports = class Player{
     }
     removeCard(card){
         this.cards.splice(this.cards.indexOf(card), 1);
+        this.discardedCards.push(card);
     }
     setName(name){
         this.nickname = name;

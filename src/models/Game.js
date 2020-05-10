@@ -1,8 +1,8 @@
 module.exports = class Game{
     constructor(room){
-        this.players = room.players; //All players take place in game
+        this.players = room.players.slice(); //All players take place in game
         this.room = room; //Room
-        this.activePlayers = room.players; //Players take part in current round
+        this.activePlayers = room.players.slice(); //Players take part in current round
         this.moveOrderId = this.activePlayers[0].id; // Player move order detector
         this.allCards = []; // All cards exist in current game
         this.cardDeck = []; // Card deck of game
@@ -16,6 +16,9 @@ module.exports = class Game{
     }
     turningPlayer(){
         return this.findPlayerById(this.moveOrderId);
+    }
+    leaveRound(looser){
+        this.activePlayers.splice(this.activePlayers.indexOf(looser), 1);
     }
     
 }

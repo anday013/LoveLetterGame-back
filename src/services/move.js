@@ -1,7 +1,7 @@
 const deck = require('./deck');
 
 const { guard, priest, baron, handmaid, prince, king, princess } = require('./cards');
-let activeCard = null;
+
 
 /*
  * Handle player turnings
@@ -21,10 +21,9 @@ function move(game, card, currentPlayer, relatedInfoObj) {
         if (game.turningPlayer().socketId === currentPlayer.socketId
             && game.turningPlayer().isCardMine(card)
             && deck.isExist(card, game.allCards)) {
-
-            activeCard = card;
+            currentPlayer.isProtected = false;
             game.turningPlayer().removeCard(card);
-            cardSeperator(card, relatedInfoObj);
+            cardSeperator(card, relatedInfoObj, game);
             game.moveOrderId = nextPlayerId(game.moveOrderId, game.activePlayers);
             return "Success";
         }
@@ -45,11 +44,11 @@ function move(game, card, currentPlayer, relatedInfoObj) {
  *      relatedInfoObj - extra information for player card (if needed)
  * Return: (Void)
 */
-const cardSeperator = (card, relatedInfo) => {
+const cardSeperator = (card, relatedInfo, game) => {
     try {
         switch (card.name) {
             case "Guard":
-                guard(relatedInfo.targetPlayer, relatedInfo.guessedCard);
+                guard(relatedInfo.targetPlayer, relatedInfo.guessedCard, game);
                 break;
             case "Priest":
                 priest(relatedInfo.targetPlayer);
@@ -58,18 +57,18 @@ const cardSeperator = (card, relatedInfo) => {
                 baron(relatedInfo.targetPlayer, relatedInfo.currentPlayer);
                 break;
             case "Handmaid":
-                handmaid(relatedInfo.currentPlayer);
+                handmaid(relatedInfo.currentPlayer); // +
                 break;
             case "Prince":
-                prince(relatedInfo.targetPlayer);
+                prince(relatedInfo.targetPlayer); // +
                 break;
             case "King":
-                king(relatedInfo.targetPlayer, relatedInfo.currentPlayer);
+                king(relatedInfo.targetPlayer, relatedInfo.currentPlayer); // +
                 break;
             case "Countess":
                 break;
             case "Princess":
-                princess(relatedInfo.currentPlayer)
+                princess(relatedInfo.currentPlayer, game)
                 break;
             default:
                 break;
