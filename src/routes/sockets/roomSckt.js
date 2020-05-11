@@ -18,6 +18,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
                 roomPlayerCheck(found_room, nickName);
                 startGameFlag(found_room);
                 rooms.update(rooms.find(roomId), found_room);
+                sendWaitingRooms();
             }
             else
                 socket.emit("room-response", new Response("Wrong room id"));
@@ -64,6 +65,11 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
             else if(moveResult === "It's not your turn")
                 moveResponse = new Response(moveResult);
             io.to(currentPlayer.socketId).emit('turn-result', moveResponse);
+            // io.to(currentGame.room.name).emit('player-lost', new Response("Lost",200, playerObj))
+            // io.to(currentGame.room.name).emit('active-players', new Response("Active players",200, currentGame.activePlayers))
+            // io.to(currentPlayer.socketId).emit('card-priest', new Response("Card priest",200, {targetPlayer.id ,targetPlayer.cards}));
+            // io.to(currentGame.room.name).emit('card-prince', new Response("Card prince",200, targetPlayer.id));
+            // io.to(currentGame.room.name).emit('card-king', new Response("Card king",200, {currentPlayer.id ,targetPlayer.id}));
         } catch (error) {
             console.error(error)
         }
@@ -127,7 +133,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
 
     const sendWaitingRooms = () => {
         const waitingRooms = rooms.readAll().filter(r => r.status !== "Playing");
-        socket.emit('receive-rooms', new Response("Done", 200, waitingRooms))
+        io.emit('receive-rooms', new Response("Done", 200, waitingRooms))
     }
 
 

@@ -1,3 +1,4 @@
 ;{"id":"962d7491e8ba960315fb4694a06cc9ca","name":"kazaki","players":[],"status":"Waiting","maxPlayers":"2"}
 ;{"id":"aca2e39d4ab032c8f6226d8a3eee837a","name":"war","players":[],"status":"Waiting","maxPlayers":"4"}
 ;{"id":"5621f92c92843081b26f17d0046a004c","name":"Pole","players":[],"status":"Waiting","maxPlayers":"2"}
+;{"id":"21c276e1294b7590df733268d918e005","name":"BB","players":[],"status":"Waiting","maxPlayers":"3"}

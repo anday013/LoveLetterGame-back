@@ -37,10 +37,9 @@ function newRound(game, io){
 
 function checkForWinner(game){
     if(game.activePlayers.length == 1){
-        game.activePlayers.forEach((x, i) => console.log(i + " " + x))
-        return true;
+       return game.activePlayers[0]
     }
-    return false;
+    return null;
 }
 
 //////////////////////////////////

@@ -32,10 +32,14 @@ function baron(targetPlayer, currentPlayer, game) {
     if (currentPlayerPoints > targetPlayerPoints)
     {
         game.leaveRound(targetPlayer);
-        return true;
+        return 1;
     }
-    game.leaveRound(currentPlayer)
-    return false
+    else if(currentPlayerPoints < targetPlayerPoints)
+    {
+        game.leaveRound(currentPlayer);
+        return 2;
+    }
+    return 0
 }
 
 /*
@@ -56,10 +60,10 @@ function prince(targetPlayer) {
     try{
         discardHand(targetPlayer);
         targetPlayer.addCard(cardDeck.drawCardFromDeck().setPlayerId(targetPlayer.id))
-        return true;
+        return true; // return targetPlayerID
     }catch(err){
         console.error(err)
-        return false;
+        return false; // Cuntes
     }
 }
 
@@ -91,6 +95,8 @@ function king(targetPlayer, currentPlayer) {
     }
 }
 
+function countess() {   
+}
 
 
 function princess(currentPlayer, game) {
