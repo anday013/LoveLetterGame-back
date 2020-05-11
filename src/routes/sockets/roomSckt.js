@@ -56,11 +56,11 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
                 moveResponse = new Response(moveResult, 200, {});
                 if ((winner = gameFunctions.checkForWinner(currentGame))) {
                     io.to(currentGame.room.name).emit('win', new Response("Win", 200, winner))
+                    currentGame = gameFunctions.newRound(currentGame, io);
                     return;
                 }
 
-                if (!gameFunctions.nextStep(currentGame, currentGame.cardDeck, io))
-                    currentGame = gameFunctions.newRound(currentGame, io);
+                gameFunctions.nextStep(currentGame, currentGame.cardDeck, io);
             }
             else if (moveResult === "It's not your turn")
                 moveResponse = new Response(moveResult);

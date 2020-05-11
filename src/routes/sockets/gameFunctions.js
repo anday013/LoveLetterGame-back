@@ -37,18 +37,24 @@ function newRound(game, io) {
 
 function checkForWinner(game) {
     if (game.activePlayers.length == 1) {
-        return game.activePlayers[0]
+        return game.activePlayers[0];
     } else if (!game.cardDeck.length) {
-
+        return comparePlayersHand;
     }
     return null;
 }
 
 
 function comparePlayersHand(players) {
-    players.forEach((player, index) => {
-
+    let score = 0;
+    let winner = null
+    players.forEach(player => {
+        if (player.points > score) {
+            score = player.points;
+            winner = player;
+        }
     })
+    return winner;
 }
 
 

@@ -2,6 +2,12 @@ const deck = require('./deck');
 
 const { guard, priest, baron, handmaid, prince, king, princess } = require('./cards');
 
+function infoHandler(relatedInfoObj, currentPlayer) {
+    relatedInfoObj.currentPlayer = currentPlayer;
+    if(targetPlayerId in relatedInfoObj)
+        relatedInfoObj.targetPlayer = game.findPlayerById(obj.targetPlayerId);
+}
+
 
 /*
  * Handle player turnings
@@ -16,8 +22,7 @@ const { guard, priest, baron, handmaid, prince, king, princess } = require('./ca
 */
 function move(game, card, currentPlayer, relatedInfoObj) {
     try {
-        relatedInfoObj.currentPlayer = currentPlayer;
-
+        infoHandler(relatedInfoObj, currentPlayer);
         if (game.turningPlayer().socketId === currentPlayer.socketId
             && game.turningPlayer().isCardMine(card)
             && deck.isExist(card, game.allCards)) {
