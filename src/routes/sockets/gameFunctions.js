@@ -25,7 +25,7 @@ function initialActions(game, io) {
     nextStep(game, game.cardDeck, io);
 }
 ///////////////////////////////////////////////////
-function newRound(game, io){
+function newRound(game, io) {
     console.log(game.players);
     game.activePlayers = game.players.slice();
     initialActions(game, io);
@@ -35,13 +35,31 @@ function newRound(game, io){
 
 
 
-function checkForWinner(game){
-    if(game.activePlayers.length == 1){
-       return game.activePlayers[0]
+function checkForWinner(game) {
+    if (game.activePlayers.length == 1) {
+        return game.activePlayers[0]
+    } else if (!game.cardDeck.length) {
+
     }
     return null;
 }
 
+
+function comparePlayersHand(players) {
+    players.forEach((player, index) => {
+
+    })
+}
+
+
+function nextStep(game, cardDeck, io) {
+    if (!cardDeck.length)
+        return false;
+    drawCardForPlayer(game.turningPlayer(), cardDeck);
+    sendGameCards(game, io);
+    io.to(game.room.name).emit('move-order', new Response("Turn player id", 200, game.moveOrderId));
+    return true;
+}
 //////////////////////////////////
 
 function twoPlayerMod(cardDeck) {
@@ -59,17 +77,9 @@ function sendGameCards(game, io) {
     });
 }
 
-function nextStep(game, cardDeck, io) {
-    if(!cardDeck.length)
-        return false;
-    drawCardForPlayer(game.turningPlayer(), cardDeck);
-    sendGameCards(game, io);
-    io.to(game.room.name).emit('move-order', new Response("Turn player id", 200, game.moveOrderId));
-    return true;
-}
 
 function sendPlayerCards(player, io) {
     if (player)
         io.to(player.socketId).emit('my-cards', new Response("Your cards...", 200, player.cards));
 }
-module.exports = { initializeGame, sendPlayerCards, sendGameCards, nextStep, newRound, checkForWinner}
+module.exports = { initializeGame, sendPlayerCards, sendGameCards, nextStep, newRound, checkForWinner }

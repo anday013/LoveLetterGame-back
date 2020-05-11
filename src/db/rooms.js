@@ -4,10 +4,10 @@ const Player = require('../models').Player;
 const path = require('path');
 const filename = path.join(__dirname, '/rooms.txt');
 
-const readAll = () => {
+const readAll = async () => {
     try {
         let result = [];
-        let text = fs.readFileSync(filename, { encoding: 'utf-8' });
+        let text = await fs.readFileSync(filename, { encoding: 'utf-8' });
         text.split(';').forEach(x => {
             if (x != "") {
                 let object = JSON.parse(x);
@@ -26,9 +26,9 @@ const readAll = () => {
     }
 }
 
-const write = (room) => {
+const write = async (room) => {
     try {
-        fs.appendFileSync(filename, ';' + JSON.stringify(room));
+        await fs.appendFileSync(filename, ';' + JSON.stringify(room));
         return true;
     } catch (err) {
         console.error(err);
@@ -36,8 +36,10 @@ const write = (room) => {
     }
 }
 
-const find = (id) => {
-    return readAll().find(room => room.id === id);
+const find = async (id) => {
+    const allRooms = await readAll();
+    const validRoom = allRooms.find(room => room.id === id);
+    return validRoom;
 }
 
 
@@ -48,7 +50,7 @@ const clean = () => {
 
 const remove = async (id) => {
     let data = await fs.readFileSync(filename, 'utf-8');
-    let room = find(id);
+    let room = await find(id);
     if (room) {
         let newValue = data.replace(JSON.stringify(room), '');
         await fs.writeFileSync(filename, newValue, 'utf-8');

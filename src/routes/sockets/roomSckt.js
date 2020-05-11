@@ -6,9 +6,9 @@ const move = require('../../services').move;
 const games = [];
 
 module.exports = roomSckt = (io, socket, currentPlayer) => {
-    socket.on('enter-room', (req) => {
+    socket.on('enter-room', async (req) => {
         const roomId = req.roomId;
-        const found_room = rooms.find(roomId);
+        const found_room = await rooms.find(roomId);
         const nickName = req.nickName;
         if (!nickName)
             socket.emit("room-response", new Response("Wrong nickname"));
@@ -17,8 +17,8 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
                 socket.join(found_room.name);
                 roomPlayerCheck(found_room, nickName);
                 startGameFlag(found_room);
-                rooms.update(rooms.find(roomId), found_room);
-                sendWaitingRooms();
+                await rooms.update(await rooms.find(roomId), found_room);
+                await sendWaitingRooms();
             }
             else
                 socket.emit("room-response", new Response("Wrong room id"));
@@ -52,17 +52,17 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
             const currentGame = findGame(card);
             const moveResult = move(currentGame, card, currentPlayer, relatedInfo);
             let moveResponse;
-            if(moveResult === "Success"){
+            if (moveResult === "Success") {
                 moveResponse = new Response(moveResult, 200, {});
-                if((winner = gameFunctions.checkForWinner(currentGame))){
-                    io.to(currentGame.room.name).emit('win', new Response("Win",200, winner))
+                if ((winner = gameFunctions.checkForWinner(currentGame))) {
+                    io.to(currentGame.room.name).emit('win', new Response("Win", 200, winner))
                     return;
                 }
 
-                if(!gameFunctions.nextStep(currentGame, currentGame.cardDeck, io))
+                if (!gameFunctions.nextStep(currentGame, currentGame.cardDeck, io))
                     currentGame = gameFunctions.newRound(currentGame, io);
             }
-            else if(moveResult === "It's not your turn")
+            else if (moveResult === "It's not your turn")
                 moveResponse = new Response(moveResult);
             io.to(currentPlayer.socketId).emit('turn-result', moveResponse);
             // io.to(currentGame.room.name).emit('player-lost', new Response("Lost",200, playerObj))
@@ -82,10 +82,10 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
 
 
 
-    function findGame(card){
+    function findGame(card) {
         let foundGame;
         games.forEach(g => {
-            if(g.allCards.find(c => c.id === card.id)){
+            if (g.allCards.find(c => c.id === card.id)) {
                 foundGame = g;
             }
         });
@@ -118,21 +118,22 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
     // });
 
 
-    socket.on('new-room', (req) => {
+    socket.on('new-room', async (req) => {
         const roomName = req.roomName;
         const maxPlayers = req.maxPlayers;
         if (roomName && maxPlayers && isNumber(maxPlayers)) {
             let createdRoom = new Room(roomName, 'Waiting', maxPlayers);
-            rooms.write(createdRoom);
+            await rooms.write(createdRoom);
             socket.emit('created-room', new Response("Done", 200, createdRoom));
-            sendWaitingRooms();
+            await sendWaitingRooms();
         }
         else
             socket.emit('created-room', new Response("Wrong arguments"));
     });
 
-    const sendWaitingRooms = () => {
-        const waitingRooms = rooms.readAll().filter(r => r.status !== "Playing");
+    const sendWaitingRooms = async () => {
+        const allRooms = await rooms.readAll();
+        const waitingRooms = allRooms.filter(r => r.status !== "Playing");
         io.emit('receive-rooms', new Response("Done", 200, waitingRooms))
     }
 
