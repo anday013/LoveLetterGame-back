@@ -41,7 +41,6 @@ function move(game, card, currentPlayer, relatedInfoObj, cardResponse) {
             currentPlayer.protected = false;
             game.turningPlayer().removeCard(card);
             cardResponse.result = cardSeperator(card, relatedInfoObj, game);
-            console.log("Card Response in  move: " + cardResponse.result)
             game.moveOrderId = nextPlayerId(game.moveOrderId, game.activePlayers);
             return "Success";
         }
@@ -87,7 +86,7 @@ const cardSeperator = (card, relatedInfo, game) => {
 
 
     } catch (err) {
-        console.log(err)
+        console.error(err)
     }
 }
 

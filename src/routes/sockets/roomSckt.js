@@ -83,10 +83,10 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
                     io.to(currentPlayer.socketId).emit('card-priest', new Response("card-priest",200, {targetPlayerId: relatedInfo.targetPlayerId, cardResponseResult: cardResponse.result}));
                     break;
                 case 5:
-                    io.to(currentPlayer.socketId).emit('card-priest', new Response("card-prince",200, relatedInfo.targetPlayerId));
+                    io.to(currentPlayer.socketId).emit('card-prince', new Response("card-prince",200, relatedInfo.targetPlayerId));
                     break;
                 case 6:
-                    io.to(currentPlayer.socketId).emit('card-priest', new Response("card-king",200,  {currentPlayerId: currentPlayer.id, targetPlayerId: relatedInfo.targetPlayerId}));
+                    io.to(currentPlayer.socketId).emit('card-king', new Response("card-king",200,  {currentPlayerId: currentPlayer.id, targetPlayerId: relatedInfo.targetPlayerId}));
                     break;
                 default:
                     break

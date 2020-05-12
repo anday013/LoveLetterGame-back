@@ -24,10 +24,6 @@ sockets.init = (server) => {
             console.log("Disconnected: current number of players is %s", connections.length);
         });
         
-        io.of('/rooms').on('connection', (socket) => {
-            console.log(socket.id)
-        })
-        
     });
     
 }
