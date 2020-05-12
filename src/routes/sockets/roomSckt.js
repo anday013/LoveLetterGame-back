@@ -58,10 +58,9 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
             switch (moveResult) {
                 case "Success":
                     moveResponse = new Response(moveResult, 200);
+                    let winner;
                     if ((winner = gameFunctions.checkForWinner(currentGame))) {
-                        console.log("Winner")
-                        console.log(winner)
-                        io.to(currentGame.room.name).emit('win', new Response("Win", 200, winner))
+                        io.to(currentGame.room.name).emit('win', new Response("Win", 200, winner));
                         currentGame = gameFunctions.newRound(currentGame, io);
                         return;
                     }
@@ -79,12 +78,27 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
                     break;
             }
             io.to(currentPlayer.socketId).emit('turn-result', moveResponse);
+            switch (card.power) {
+                case 2:
+                    io.to(currentPlayer.socketId).emit('card-priest', new Response("card-priest",200, {targetPlayerId: relatedInfo.targetPlayerId, cardResponseResult: cardResponse.result}));
+                    break;
+                case 5:
+                    io.to(currentPlayer.socketId).emit('card-priest', new Response("card-prince",200, relatedInfo.targetPlayerId));
+                    break;
+                case 6:
+                    io.to(currentPlayer.socketId).emit('card-priest', new Response("card-king",200,  {currentPlayerId: currentPlayer.id, targetPlayerId: relatedInfo.targetPlayerId}));
+                    break;
+                default:
+                    break
+            }
+            gameFunctions.sendPlayersWithoutCards(currentGame.activePlayers, io, currentGame)
             // io.to(currentGame.room.name).emit('player-lost', new Response("Lost",200, playerObj))
-            // io.to(currentGame.room.name).emit('active-players', new Response("Active players",200, currentGame.activePlayers))
-            // io.to(currentPlayer.socketId).emit('card-priest', new Response("Card priest",200, {targetPlayer.id ,targetPlayer.cards}));
-            // io.to(currentGame.room.name).emit('card-prince', new Response("Card prince",200, targetPlayer.id));
-            // io.to(currentGame.room.name).emit('card-king', new Response("Card king",200, {currentPlayer.id ,targetPlayer.id}));
-        } catch (error) {
+            // io.to(currentGame.room.name).emit('active-players', new Response("Active players",200, currentGame.activePlayers)) +
+            // io.to(currentPlayer.socketId).emit('card-priest', new Response("Card priest",200, {targetPlayer.id ,targetPlayer.cards})); +
+            // io.to(currentGame.room.name).emit('card-prince', new Response("Card prince",200, targetPlayer.id)); +
+            // io.to(currentGame.room.name).emit('card-king', new Response("Card king",200, {currentPlayer.id ,targetPlayer.id})); +
+        }
+        catch (error) {
             console.error(error)
         }
     });

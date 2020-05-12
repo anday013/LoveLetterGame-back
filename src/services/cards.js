@@ -14,7 +14,7 @@ function guard(targetPlayer, guessedCardPower, game) {
 * Returns target player cards
 */
 function priest(targetPlayer) {
-    return targetPlayer.cards;
+    return targetPlayer.cards.filter(c => c.power === 2);
 }
 
 
@@ -59,7 +59,8 @@ function handmaid(currentPlayer, game) {
 function prince(targetPlayer, game) {
     try{
         discardHand(targetPlayer, game);
-        targetPlayer.addCard(game.cardDeck.drawCardFromDeck().setPlayerId(targetPlayer.id))
+        if(game.activePlayers.find(p => p.id === targetPlayer.id))
+            game.activePlayers.find(p => p.id === targetPlayer.id).addCard(deck.drawCardFromDeck().setPlayerId(targetPlayer.id));
         return targetPlayer.id;
     }catch(err){
         console.error(err)
@@ -72,7 +73,7 @@ function discardHand(targetPlayer, game) {
         targetPlayer.cards.forEach(card => {
             if (card.name === "Princess")
                 princess(targetPlayer, game);
-        })
+        });
         targetPlayer.cards = [];
         return true;
 

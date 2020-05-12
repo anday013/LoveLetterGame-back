@@ -2,6 +2,7 @@ const deck = require('../../services').deck;
 const move = require('../../services').move;
 const Game = require('../../models').Game;
 const Response = require('../../models').Response;
+const Player = require('../../models').Player;
 const initializeGame = (io, room) => {
     let newGame = new Game(room);
     initialActions(newGame, io);
@@ -66,6 +67,20 @@ function nextStep(game, cardDeck, io) {
     io.to(game.room.name).emit('move-order', new Response("Turn player id", 200, game.moveOrderId));
     return true;
 }
+
+
+function sendPlayersWithoutCards(players, io, game){
+    let players_copy = [];
+    players.forEach(p => {
+        let p_copy = new Player(p.nickname, p.points, p.socketId);
+        p_copy.id = p.id;
+        p_copy.discardedCards = p.discardedCards;
+        p_copy.protected = p.protected;
+        players_copy.push(p_copy);
+    });
+    io.to(game.room.name).emit('active-players', new Response("Active players",200, players_copy))
+}
+
 //////////////////////////////////
 
 function twoPlayerMod(cardDeck) {
@@ -88,4 +103,4 @@ function sendPlayerCards(player, io) {
     if (player)
         io.to(player.socketId).emit('my-cards', new Response("Your cards...", 200, player.cards));
 }
-module.exports = { initializeGame, sendPlayerCards, sendGameCards, nextStep, newRound, checkForWinner }
+module.exports = { initializeGame, sendPlayerCards, sendGameCards, nextStep, newRound, checkForWinner, sendPlayersWithoutCards}
