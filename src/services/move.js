@@ -1,17 +1,25 @@
 const deck = require('./deck');
 
-const { guard, priest, baron, handmaid, prince, king, princess } = require('./cards');
+const { guard, priest, baron, handmaid, prince, king, princess, countess} = require('./cards');
 
-function infoHandler(relatedInfoObj, currentPlayer) {
+function infoHandler(relatedInfoObj, currentPlayer, game) {
     relatedInfoObj.currentPlayer = currentPlayer;
-    if(targetPlayerId in relatedInfoObj)
-        relatedInfoObj.targetPlayer = game.findPlayerById(obj.targetPlayerId);
+    if(relatedInfoObj.hasOwnProperty('targetPlayerId'))
+        relatedInfoObj.targetPlayer = game.findPlayerById(relatedInfoObj.targetPlayerId);
+    return relatedInfoObj;
 }
 
+function protectionCheck(relatedInfoObj)
+{
+    if(relatedInfoObj.targetPlayer){
+        return relatedInfoObj.targetPlayer.protected; // true or false
+    }
+    return false;
+}
 
 /*
  * Handle player turnings
- * Arguments: 
+ * Arguments:
  *      game - current game
  *      card - turned card
  *      currentPlayer - turning player
@@ -20,15 +28,20 @@ function infoHandler(relatedInfoObj, currentPlayer) {
  *      Success - if everything ok
  *      (Error message) - else
 */
-function move(game, card, currentPlayer, relatedInfoObj) {
+function move(game, card, currentPlayer, relatedInfoObj, cardResponse) {
     try {
-        infoHandler(relatedInfoObj, currentPlayer);
+        relatedInfoObj = infoHandler(relatedInfoObj, currentPlayer, game);
         if (game.turningPlayer().socketId === currentPlayer.socketId
             && game.turningPlayer().isCardMine(card)
             && deck.isExist(card, game.allCards)) {
-            currentPlayer.isProtected = false;
+            if(protectionCheck(relatedInfoObj))
+                return "Protected";
+            if(currentPlayer.cards.find(c => (c.power === 7)) &&  (card.power === 5 || card.power === 6))
+                return "Wrong card playerd";
+            currentPlayer.protected = false;
             game.turningPlayer().removeCard(card);
-            cardSeperator(card, relatedInfoObj, game);
+            cardResponse.result = cardSeperator(card, relatedInfoObj, game);
+            console.log("Card Response in  move: " + cardResponse.result)
             game.moveOrderId = nextPlayerId(game.moveOrderId, game.activePlayers);
             return "Success";
         }
@@ -51,30 +64,23 @@ function move(game, card, currentPlayer, relatedInfoObj) {
 */
 const cardSeperator = (card, relatedInfo, game) => {
     try {
-        switch (card.name) {
-            case "Guard":
-                guard(relatedInfo.targetPlayer, relatedInfo.guessedCard, game);
-                break;
-            case "Priest":
-                priest(relatedInfo.targetPlayer);
-                break;
-            case "Baron":
-                baron(relatedInfo.targetPlayer, relatedInfo.currentPlayer);
-                break;
-            case "Handmaid":
-                handmaid(relatedInfo.currentPlayer); // +
-                break;
-            case "Prince":
-                prince(relatedInfo.targetPlayer); // +
-                break;
-            case "King":
-                king(relatedInfo.targetPlayer, relatedInfo.currentPlayer); // +
-                break;
-            case "Countess":
-                break;
-            case "Princess":
-                princess(relatedInfo.currentPlayer, game)
-                break;
+        switch (card.power) {
+            case 1:
+                return guard(relatedInfo.targetPlayer, relatedInfo.guessedCardPower, game);
+            case 2:
+                return priest(relatedInfo.targetPlayer);
+            case 3:
+                return baron(relatedInfo.targetPlayer, relatedInfo.currentPlayer, game);
+            case 4:
+                return handmaid(relatedInfo.currentPlayer, game); // +
+            case 5:
+                return prince(relatedInfo.targetPlayer, game); // +
+            case 6:
+                return king(relatedInfo.targetPlayer, relatedInfo.currentPlayer, game); // +
+            case 7:
+                return countess();
+            case 8:
+                return princess(relatedInfo.currentPlayer, game)
             default:
                 break;
         }

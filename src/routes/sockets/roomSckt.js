@@ -49,21 +49,35 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
 
     socket.on('make-turn', (card, relatedInfo) => {
         try {
-            const currentGame = findGame(card);
-            const moveResult = move(currentGame, card, currentPlayer, relatedInfo);
+            let currentGame = findGame(card);
+            if(!currentGame)
+                return;
+            let cardResponse = {};
+            const moveResult = move(currentGame, card, currentGame.findPlayerById(currentPlayer.id), relatedInfo, cardResponse);
             let moveResponse;
-            if (moveResult === "Success") {
-                moveResponse = new Response(moveResult, 200, {});
-                if ((winner = gameFunctions.checkForWinner(currentGame))) {
-                    io.to(currentGame.room.name).emit('win', new Response("Win", 200, winner))
-                    currentGame = gameFunctions.newRound(currentGame, io);
-                    return;
-                }
+            switch (moveResult) {
+                case "Success":
+                    moveResponse = new Response(moveResult, 200);
+                    if ((winner = gameFunctions.checkForWinner(currentGame))) {
+                        console.log("Winner")
+                        console.log(winner)
+                        io.to(currentGame.room.name).emit('win', new Response("Win", 200, winner))
+                        currentGame = gameFunctions.newRound(currentGame, io);
+                        return;
+                    }
 
-                gameFunctions.nextStep(currentGame, currentGame.cardDeck, io);
+                    gameFunctions.nextStep(currentGame, currentGame.cardDeck, io);
+                    break;
+                case "It's not your turn":
+                    moveResponse = new Response(moveResult);
+                    break;
+                case "Protected":
+                    moveResponse = new Response(moveResult, 300);
+                    break;
+                case "Wrong card playerd":
+                    moveResponse = new Response(moveResult, 500);
+                    break;
             }
-            else if (moveResult === "It's not your turn")
-                moveResponse = new Response(moveResult);
             io.to(currentPlayer.socketId).emit('turn-result', moveResponse);
             // io.to(currentGame.room.name).emit('player-lost', new Response("Lost",200, playerObj))
             // io.to(currentGame.room.name).emit('active-players', new Response("Active players",200, currentGame.activePlayers))

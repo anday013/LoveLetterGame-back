@@ -26,7 +26,7 @@ function initialActions(game, io) {
 }
 ///////////////////////////////////////////////////
 function newRound(game, io) {
-    console.log(game.players);
+    game.players.forEach(p => p.reset());
     game.activePlayers = game.players.slice();
     initialActions(game, io);
     return game;
