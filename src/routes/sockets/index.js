@@ -11,7 +11,7 @@ sockets.init = (server) => {
 
 
         connections.push(socket);
-    
+
         let currentPlayer = new Player('player' + crypto.randomBytes(16).toString("hex"), 0, socket.id);
         //Connected
         console.log("Connected: current number of players is %s", connections.length);
@@ -23,9 +23,9 @@ sockets.init = (server) => {
             connections.splice(connections.indexOf(socket), 1);
             console.log("Disconnected: current number of players is %s", connections.length);
         });
-        
+
     });
-    
+
 }
 
 

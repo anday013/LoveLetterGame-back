@@ -16,6 +16,10 @@ function protectionCheck(relatedInfoObj)
     }
     return false;
 }
+// if all players protected return undefined
+function allProtectedCheck(currentPlayer, game){
+    return game.activePlayers.filter(ap => ap.id === currentPlayer.id).find(ap => !ap.protected);
+}
 
 /*
  * Handle player turnings
@@ -34,13 +38,15 @@ function move(game, card, currentPlayer, relatedInfoObj, cardResponse) {
         if (game.turningPlayer().socketId === currentPlayer.socketId
             && game.turningPlayer().isCardMine(card)
             && deck.isExist(card, game.allCards)) {
-            if(protectionCheck(relatedInfoObj))
+            if(protectionCheck(relatedInfoObj) && allProtectedCheck(currentPlayer, game))
                 return "Protected";
+
             if(currentPlayer.cards.find(c => (c.power === 7)) &&  (card.power === 5 || card.power === 6))
                 return "Wrong card playerd";
             currentPlayer.protected = false;
             game.turningPlayer().removeCard(card);
-            cardResponse.result = cardSeperator(card, relatedInfoObj, game);
+            if(allProtectedCheck(currentPlayer, game))
+                cardResponse.result = cardSeperator(card, relatedInfoObj, game);
             game.moveOrderId = nextPlayerId(game.moveOrderId, game.activePlayers);
             return "Success";
         }

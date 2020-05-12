@@ -14,7 +14,7 @@ function guard(targetPlayer, guessedCardPower, game) {
 * Returns target player cards
 */
 function priest(targetPlayer) {
-    return targetPlayer.cards.filter(c => c.power === 2);
+    return targetPlayer.cards;
 }
 
 
