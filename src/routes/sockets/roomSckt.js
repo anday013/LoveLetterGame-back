@@ -61,6 +61,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
                     let winner;
                     if ((winner = gameFunctions.checkForWinner(currentGame))) {
                         io.to(currentGame.room.name).emit('win', new Response("Win", 200, winner));
+                        gameFunctions.sendPlayersWithoutCards(currentGame.activePlayers, io, currentGame);
                         currentGame = gameFunctions.newRound(currentGame, io);
                         return;
                     }
@@ -77,19 +78,20 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
                     moveResponse = new Response(moveResult, 500);
                     break;
             }
+            io.to(currentGame.room.name).emit('played-card', new Response("Played card", 200, {fromPlayer : currentPlayer.id, cardPower: card.power,toPlayer: relatedInfo.targetPlayerId, }));
             io.to(currentPlayer.socketId).emit('turn-result', moveResponse);
             switch (card.power) {
                 case 2:
                     io.to(currentPlayer.socketId).emit('card-priest', new Response("card-priest",200, {targetPlayerId: relatedInfo.targetPlayerId, cardResponseResult: cardResponse.result}));
                     break;
                 case 5:
-                    io.to(currentPlayer.socketId).emit('card-prince', new Response("card-prince",200, relatedInfo.targetPlayerId));
+                    io.to(currentGame.room.name).emit('card-prince', new Response("card-prince",200, relatedInfo.targetPlayerId));
                     break;
                 case 6:
-                    io.to(currentPlayer.socketId).emit('card-king', new Response("card-king",200,  {currentPlayerId: currentPlayer.id, targetPlayerId: relatedInfo.targetPlayerId}));
+                    io.to(currentGame.room.name).emit('card-king', new Response("card-king",200,  {currentPlayerId: currentPlayer.id, targetPlayerId: relatedInfo.targetPlayerId}));
                     break;
                 default:
-                    break
+                    break;
             }
             gameFunctions.sendPlayersWithoutCards(currentGame.activePlayers, io, currentGame)
             // io.to(currentGame.room.name).emit('player-lost', new Response("Lost",200, playerObj))

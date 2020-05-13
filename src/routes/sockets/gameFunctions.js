@@ -54,6 +54,7 @@ function comparePlayersHand(players) {
             score = player.points;
             winner = player;
         }
+        player.removeAllCards();
     })
     return winner;
 }

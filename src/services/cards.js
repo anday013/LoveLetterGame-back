@@ -74,7 +74,7 @@ function discardHand(targetPlayer, game) {
             if (card.name === "Princess")
                 princess(targetPlayer, game);
         });
-        targetPlayer.cards = [];
+        game.activePlayers.find(p => p.id === targetPlayer.id).cards = [];
         return true;
 
     } catch (error) {

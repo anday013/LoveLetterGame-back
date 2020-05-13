@@ -16,6 +16,10 @@ module.exports = class Player{
         this.cards.splice(this.cards.findIndex(c => c.id === card.id ), 1);
         this.discardedCards.push(card);
     }
+    removeAllCards(){
+        this.cards.forEach(c => this.discardedCards.push(c));
+        this.cards = [];
+    }
     setName(name){
         this.nickname = name;
     }
