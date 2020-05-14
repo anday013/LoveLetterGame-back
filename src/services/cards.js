@@ -1,20 +1,20 @@
 const deck = require('./').deck;
+const score = require('./').score;
 /*
 * If guessed card is exist in target player returns card, otherwise null
 */
 function guard(targetPlayer, guessedCardPower, game) {
     if(targetPlayer.cards.find(c => c.power == guessedCardPower)){
-        game.leaveRound(targetPlayer);
-        return true;
+        return score.loose(game,targetPlayer);
     }
-    return false;
+    return null;
 }
 
 /*
 * Returns target player cards
 */
 function priest(targetPlayer) {
-    return targetPlayer.cards;
+    return targetPlayer.cards.slice();
 }
 
 
@@ -31,15 +31,13 @@ function baron(targetPlayer, currentPlayer, game) {
     })
     if (currentPlayerPoints > targetPlayerPoints)
     {
-        game.leaveRound(targetPlayer);
-        return 1;
+        return score.loose(game,targetPlayer);
     }
     else if(currentPlayerPoints < targetPlayerPoints)
     {
-        game.leaveRound(currentPlayer);
-        return 2;
+        return score.loose(game,currentPlayer);
     }
-    return 0
+    return null;
 }
 
 /*
@@ -105,11 +103,10 @@ function countess() {
 
 function princess(currentPlayer, game) {
     try{
-        game.leaveRound(currentPlayer);
-        return true;
+        return score.loose(game,currentPlayer);
     }catch(err){
         console.error(err)
-        return false;
+        return null;
     }
 }
 

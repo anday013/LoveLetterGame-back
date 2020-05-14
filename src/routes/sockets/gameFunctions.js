@@ -1,4 +1,5 @@
 const deck = require('../../services').deck;
+const score = require('../../services').score;
 const move = require('../../services').move;
 const Game = require('../../models').Game;
 const Response = require('../../models').Response;
@@ -15,7 +16,8 @@ const initializeGame = (io, room) => {
 function initialActions(game, io) {
     game.cardDeck = deck.prepareDeck(game.room.maxPlayers);
     game.allCards = game.cardDeck.slice();
-
+    game.reservedCard = deck.drawCardFromDeck(cardDeck);
+    
     if (game.room.maxPlayers == 2)
         twoPlayerMod(game.cardDeck);
 
@@ -30,6 +32,11 @@ function newRound(game, io) {
     game.players.forEach(p => p.reset());
     game.activePlayers = game.players.slice();
     initialActions(game, io);
+    let winner
+    if(winner = checkForWinner(game)){
+        io.to(game.room.name).emit('game-end', new Response("Game end", 200, winner))
+    }
+
     return game;
 
 }
@@ -38,15 +45,19 @@ function newRound(game, io) {
 
 function checkForWinner(game) {
     if (game.activePlayers.length == 1) {
-        return game.activePlayers[0];
+        return score.win(game.activePlayers[0], game);
     } else if (!game.cardDeck.length) {
-        return comparePlayersHand;
-    }
+        return comparePlayersHand(game.activePlayers, game);
+    } 
+    game.activePlayers.forEach(p => {
+        if(p.score === game.maxScore)
+            return p;
+    })
     return null;
 }
 
 
-function comparePlayersHand(players) {
+function comparePlayersHand(players, game) {
     let score = 0;
     let winner = null
     players.forEach(player => {
@@ -56,7 +67,7 @@ function comparePlayersHand(players) {
         }
         player.removeAllCards();
     })
-    return winner;
+    return score.win(winner, game);
 }
 
 

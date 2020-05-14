@@ -74,8 +74,11 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
                 case "Protected":
                     moveResponse = new Response(moveResult, 300);
                     break;
-                case "Wrong card playerd":
+                case "Wrong card played":
                     moveResponse = new Response(moveResult, 500);
+                    break;
+                case "All players protected":
+                    moveResponse = new Response(moveResult, 303);
                     break;
             }
             io.to(currentGame.room.name).emit('played-card', new Response("Played card", 200, {fromPlayer : currentPlayer.id, cardPower: card.power,toPlayer: relatedInfo.targetPlayerId, }));
@@ -83,12 +86,6 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
             switch (card.power) {
                 case 2:
                     io.to(currentPlayer.socketId).emit('card-priest', new Response("card-priest",200, {targetPlayerId: relatedInfo.targetPlayerId, cardResponseResult: cardResponse.result}));
-                    break;
-                case 5:
-                    io.to(currentGame.room.name).emit('card-prince', new Response("card-prince",200, relatedInfo.targetPlayerId));
-                    break;
-                case 6:
-                    io.to(currentGame.room.name).emit('card-king', new Response("card-king",200,  {currentPlayerId: currentPlayer.id, targetPlayerId: relatedInfo.targetPlayerId}));
                     break;
                 default:
                     break;

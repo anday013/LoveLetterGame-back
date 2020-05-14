@@ -16,9 +16,9 @@ function protectionCheck(relatedInfoObj)
     }
     return false;
 }
-// if all players protected return undefined
+// if all players protected return undefined else return unprotected player
 function allProtectedCheck(currentPlayer, game){
-    return game.activePlayers.filter(ap => ap.id === currentPlayer.id).find(ap => !ap.protected);
+    return game.activePlayers.filter(ap => ap.id !== currentPlayer.id).find(ap => !ap.protected);
 }
 
 /*
@@ -42,11 +42,16 @@ function move(game, card, currentPlayer, relatedInfoObj, cardResponse) {
                 return "Protected";
 
             if(currentPlayer.cards.find(c => (c.power === 7)) &&  (card.power === 5 || card.power === 6))
-                return "Wrong card playerd";
+                return "Wrong card played";
             currentPlayer.protected = false;
             game.turningPlayer().removeCard(card);
             if(allProtectedCheck(currentPlayer, game))
                 cardResponse.result = cardSeperator(card, relatedInfoObj, game);
+            else{
+                game.moveOrderId = nextPlayerId(game.moveOrderId, game.activePlayers);
+                return "All players protected";
+            }
+
             game.moveOrderId = nextPlayerId(game.moveOrderId, game.activePlayers);
             return "Success";
         }

@@ -1,22 +1,22 @@
-const win = (player) => {
+const win = (player, game) => {
     try {
-        player.points++;
-        return true;            
+        let winner = game.players.find(p => p.id === player.id);
+        winner.points++;
+        return winner;            
     } catch (error) {
         console.error(error)
-        return false;
+        return null;
     }
 }
 
 
-const loose = (player) => {
+const loose = (player, game) => {
     try {
-        if(player.points > 0)
-            player.points--;
-        return true;        
+        game.leaveRound(player);
+        return player;        
     } catch (error) {
         console.error(error)
-        return false;
+        return null;
     }
 }
 

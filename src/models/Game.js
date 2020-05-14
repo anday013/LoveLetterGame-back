@@ -6,6 +6,12 @@ module.exports = class Game{
         this.moveOrderId = this.activePlayers[0].id; // Player move order detector
         this.allCards = []; // All cards exist in current game
         this.cardDeck = []; // Card deck of game
+        this.reservedCard;
+        this.maxScore = 4;
+        if(room.players.length === 3)
+            this.maxScore = 5;
+        else if(room.players.length === 2)
+            this.maxScore = 7;
     }
 
     findPlayerByName(playerName){
@@ -18,7 +24,7 @@ module.exports = class Game{
         return this.findPlayerById(this.moveOrderId);
     }
     leaveRound(looser){
-        this.activePlayers.splice(this.activePlayers.indexOf(looser), 1);
+        this.activePlayers.splice(this.activePlayers.indexOf(score.looser), 1);
     }
     
 }
