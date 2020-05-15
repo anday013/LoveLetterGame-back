@@ -1,5 +1,5 @@
-const deck = require('./').deck;
-const score = require('./').score;
+const deck = require('./deck');
+const score = require('./score');
 /*
 * If guessed card is exist in target player returns card, otherwise null
 */
@@ -28,7 +28,7 @@ function baron(targetPlayer, currentPlayer, game) {
     });
     currentPlayer.cards.forEach(element => {
         currentPlayerPoints += element.power;
-    })
+    });
     if (currentPlayerPoints > targetPlayerPoints)
     {
         return score.loose(game,targetPlayer);
@@ -48,7 +48,7 @@ function handmaid(currentPlayer, game) {
         game.activePlayers.find(p => p.id === currentPlayer.id).protected = true;
         return true;
     }catch(err){
-        console.error(err)
+        console.error(err);
         return false;
     }
 }
@@ -57,11 +57,16 @@ function handmaid(currentPlayer, game) {
 function prince(targetPlayer, game) {
     try{
         discardHand(targetPlayer, game);
+        let drawCard = deck.drawCardFromDeck(game.cardDeck);
         if(game.activePlayers.find(p => p.id === targetPlayer.id))
-            game.activePlayers.find(p => p.id === targetPlayer.id).addCard(deck.drawCardFromDeck().setPlayerId(targetPlayer.id));
+            if(drawCard)
+                game.activePlayers.find(p => p.id === targetPlayer.id).addCard(drawCard.setPlayerId(targetPlayer.id));
+            else
+                game.activePlayers.find(p => p.id === targetPlayer.id).addCard(game.reservedCard.setPlayerId(targetPlayer.id));
+
         return targetPlayer.id;
     }catch(err){
-        console.error(err)
+        console.error(err);
         return null;
     }
 }
@@ -91,7 +96,7 @@ function king(targetPlayer, currentPlayer, game) {
         game.activePlayers.find(p => p.id === currentPlayer.id).cards.forEach(c => c.playerId = currentPlayer.id);
         return true;
     }catch(err){
-        console.error(err)
+        console.error(err);
         return false;
     }
 }
@@ -105,7 +110,7 @@ function princess(currentPlayer, game) {
     try{
         return score.loose(game,currentPlayer);
     }catch(err){
-        console.error(err)
+        console.error(err);
         return null;
     }
 }

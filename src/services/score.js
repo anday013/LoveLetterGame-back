@@ -1,8 +1,8 @@
-const win = (player, game) => {
+const win = (game, player) => {
     try {
         let winner = game.players.find(p => p.id === player.id);
         winner.points++;
-        return winner;            
+        return winner;
     } catch (error) {
         console.error(error)
         return null;
@@ -10,10 +10,11 @@ const win = (player, game) => {
 }
 
 
-const loose = (player, game) => {
+const loose = (game, player) => {
     try {
+        player.removeAllCards();
         game.leaveRound(player);
-        return player;        
+        return player;
     } catch (error) {
         console.error(error)
         return null;

@@ -79,17 +79,13 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
                     break;
                 case "All players protected":
                     moveResponse = new Response(moveResult, 303);
+                    gameFunctions.nextStep(currentGame, currentGame.cardDeck, io);
                     break;
             }
             io.to(currentGame.room.name).emit('played-card', new Response("Played card", 200, {fromPlayer : currentPlayer.id, cardPower: card.power,toPlayer: relatedInfo.targetPlayerId, }));
             io.to(currentPlayer.socketId).emit('turn-result', moveResponse);
-            switch (card.power) {
-                case 2:
-                    io.to(currentPlayer.socketId).emit('card-priest', new Response("card-priest",200, {targetPlayerId: relatedInfo.targetPlayerId, cardResponseResult: cardResponse.result}));
-                    break;
-                default:
-                    break;
-            }
+            if (card.power === 2)
+                io.to(currentPlayer.socketId).emit('card-priest', new Response("card-priest",200, {targetPlayerId: relatedInfo.targetPlayerId, cardResponseResult: cardResponse.result}));
             gameFunctions.sendPlayersWithoutCards(currentGame.activePlayers, io, currentGame)
             // io.to(currentGame.room.name).emit('player-lost', new Response("Lost",200, playerObj))
             // io.to(currentGame.room.name).emit('active-players', new Response("Active players",200, currentGame.activePlayers)) +

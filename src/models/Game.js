@@ -24,7 +24,7 @@ module.exports = class Game{
         return this.findPlayerById(this.moveOrderId);
     }
     leaveRound(looser){
-        this.activePlayers.splice(this.activePlayers.indexOf(score.looser), 1);
+        this.activePlayers.splice(this.activePlayers.indexOf(looser), 1);
     }
-    
+
 }

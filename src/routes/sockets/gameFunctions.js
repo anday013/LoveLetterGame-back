@@ -17,7 +17,7 @@ function initialActions(game, io) {
     game.cardDeck = deck.prepareDeck(game.room.maxPlayers);
     game.allCards = game.cardDeck.slice();
     game.reservedCard = deck.drawCardFromDeck(game.cardDeck);
-    
+
     if (game.room.maxPlayers == 2)
         twoPlayerMod(game.cardDeck);
 
@@ -32,8 +32,8 @@ function newRound(game, io) {
     game.players.forEach(p => p.reset());
     game.activePlayers = game.players.slice();
     initialActions(game, io);
-    let winner
-    if(winner = checkForWinner(game)){
+    let winner;
+    if((winner = checkForWinner(game))){
         io.to(game.room.name).emit('game-end', new Response("Game end", 200, winner))
     }
 
@@ -45,10 +45,10 @@ function newRound(game, io) {
 
 function checkForWinner(game) {
     if (game.activePlayers.length == 1) {
-        return score.win(game.activePlayers[0], game);
+        return score.win(game, game.activePlayers[0]);
     } else if (!game.cardDeck.length) {
         return comparePlayersHand(game.activePlayers, game);
-    } 
+    }
     game.activePlayers.forEach(p => {
         if(p.score === game.maxScore)
             return p;
@@ -58,16 +58,16 @@ function checkForWinner(game) {
 
 
 function comparePlayersHand(players, game) {
-    let score = 0;
+    let cardPower = 0;
     let winner = null
     players.forEach(player => {
-        if (player.points > score) {
-            score = player.points;
+        if (player.cards[0].power > cardPower) {
+            cardPower = player.cards[0].power;
             winner = player;
         }
         player.removeAllCards();
-    })
-    return score.win(winner, game);
+    });
+    return score.win(game, winner);
 }
 
 
@@ -115,4 +115,4 @@ function sendPlayerCards(player, io) {
     if (player)
         io.to(player.socketId).emit('my-cards', new Response("Your cards...", 200, player.cards));
 }
-module.exports = { initializeGame, sendPlayerCards, sendGameCards, nextStep, newRound, checkForWinner, sendPlayersWithoutCards}
+module.exports = { initializeGame,  nextStep, newRound, checkForWinner, sendPlayersWithoutCards}
