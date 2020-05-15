@@ -74,8 +74,10 @@ function prince(targetPlayer, game) {
 function discardHand(targetPlayer, game) {
     try {
         targetPlayer.cards.forEach(card => {
-            if (card.name === "Princess")
+            if (card.name === "Princess"){
                 princess(targetPlayer, game);
+                return true;
+            }
         });
         game.activePlayers.find(p => p.id === targetPlayer.id).cards = [];
         return true;

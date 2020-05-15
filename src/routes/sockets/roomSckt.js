@@ -50,7 +50,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
     socket.on('make-turn', (card, relatedInfo) => {
         try {
             let currentGame = findGame(card);
-            if(!currentGame)
+            if (!currentGame)
                 return;
             let cardResponse = {};
             const moveResult = move(currentGame, card, currentGame.findPlayerById(currentPlayer.id), relatedInfo, cardResponse);
@@ -77,15 +77,18 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
                 case "Wrong card played":
                     moveResponse = new Response(moveResult, 500);
                     break;
+                case "All players protected but you have self playable card":
+                    moveResponse = new Response(moveResult, 309);
+                    break;
                 case "All players protected":
                     moveResponse = new Response(moveResult, 303);
                     gameFunctions.nextStep(currentGame, currentGame.cardDeck, io);
                     break;
             }
-            io.to(currentGame.room.name).emit('played-card', new Response("Played card", 200, {fromPlayer : currentPlayer.id, cardPower: card.power,toPlayer: relatedInfo.targetPlayerId, }));
+            io.to(currentGame.room.name).emit('played-card', new Response("Played card", 200, { fromPlayer: currentPlayer.id, cardPower: card.power, toPlayer: relatedInfo.targetPlayerId, }));
             io.to(currentPlayer.socketId).emit('turn-result', moveResponse);
             if (card.power === 2)
-                io.to(currentPlayer.socketId).emit('card-priest', new Response("card-priest",200, {targetPlayerId: relatedInfo.targetPlayerId, cardResponseResult: cardResponse.result}));
+                io.to(currentPlayer.socketId).emit('card-priest', new Response("card-priest", 200, { targetPlayerId: relatedInfo.targetPlayerId, cardResponseResult: cardResponse.result }));
             gameFunctions.sendPlayersWithoutCards(currentGame.activePlayers, io, currentGame)
             // io.to(currentGame.room.name).emit('player-lost', new Response("Lost",200, playerObj))
             // io.to(currentGame.room.name).emit('active-players', new Response("Active players",200, currentGame.activePlayers)) +

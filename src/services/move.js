@@ -41,11 +41,13 @@ function move(game, card, currentPlayer, relatedInfoObj, cardResponse) {
             if(protectionCheck(relatedInfoObj) && allProtectedCheck(currentPlayer, game))
                 return "Protected";
 
+            if(!allProtectedCheck(currentPlayer, game) && hasSelfPlayableCard(currentPlayer) && !card.isSelfPlayable())
+                return "All players protected but you have self playable card";
             if(currentPlayer.cards.find(c => (c.power === 7)) &&  (card.power === 5 || card.power === 6))
                 return "Wrong card played";
             currentPlayer.protected = false;
             game.turningPlayer().removeCard(card);
-            if(allProtectedCheck(currentPlayer, game))
+            if(allProtectedCheck(currentPlayer, game) || card.isSelfPlayable())
                 cardResponse.result = cardSeperator(card, relatedInfoObj, game);
             else{
                 game.moveOrderId = nextPlayerId(game.moveOrderId, game.activePlayers);
@@ -63,6 +65,15 @@ function move(game, card, currentPlayer, relatedInfoObj, cardResponse) {
         console.error(error)
     }
 
+}
+
+
+function hasSelfPlayableCard(player){
+    player.cards.forEach(card => {
+        if(card.isSelfPlayable())
+            return true;
+    }); 
+    return false;
 }
 
 /*
