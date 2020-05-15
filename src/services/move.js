@@ -7,6 +7,8 @@ function infoHandler(relatedInfoObj, currentPlayer, game) {
     relatedInfoObj.currentPlayer = currentPlayer;
     if(relatedInfoObj.hasOwnProperty('targetPlayerId'))
         relatedInfoObj.targetPlayer = game.findPlayerById(relatedInfoObj.targetPlayerId);
+    if(relatedInfoObj.hasOwnProperty('guessedCardPower'))
+        relatedInfoObj.guessedCardPower = Number(relatedInfoObj.guessedCardPower);
     return relatedInfoObj;
 }
 
