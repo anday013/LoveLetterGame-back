@@ -53,6 +53,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
             if (!currentGame)
                 return;
             let cardResponse = {};
+            let playedCard = new Response("Played card", 200, { fromPlayer: currentPlayer.id, cardPower: card.power, toPlayer: relatedInfo.targetPlayerId});
             const moveResult = move(currentGame, card, currentGame.findPlayerById(currentPlayer.id), relatedInfo, cardResponse);
             let moveResponse;
             switch (moveResult) {
@@ -70,22 +71,27 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
                     break;
                 case "It's not your turn":
                     moveResponse = new Response(moveResult);
+                    playedCard.status = 404;
                     break;
                 case "Protected":
                     moveResponse = new Response(moveResult, 300);
+                    playedCard.status = 300;
                     break;
                 case "Wrong card played":
                     moveResponse = new Response(moveResult, 500);
+                    playedCard.status = 500;
                     break;
                 case "All players protected but you have self playable card":
                     moveResponse = new Response(moveResult, 309);
+                    playedCard.status = 309;
                     break;
                 case "All players protected":
                     moveResponse = new Response(moveResult, 303);
+                    playedCard.status = 303;
                     gameFunctions.nextStep(currentGame, currentGame.cardDeck, io);
                     break;
             }
-            io.to(currentGame.room.name).emit('played-card', new Response("Played card", 200, { fromPlayer: currentPlayer.id, cardPower: card.power, toPlayer: relatedInfo.targetPlayerId, }));
+            io.to(currentGame.room.name).emit('played-card', playedCard);
             io.to(currentPlayer.socketId).emit('turn-result', moveResponse);
             if (card.power === 2)
                 io.to(currentPlayer.socketId).emit('card-priest', new Response("card-priest", 200, { targetPlayerId: relatedInfo.targetPlayerId, cardResponseResult: cardResponse.result }));
