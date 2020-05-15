@@ -1,4 +1,5 @@
 const deck = require('./deck');
+const Card = require('../models').Card;
 
 const { guard, priest, baron, handmaid, prince, king, princess, countess} = require('./cards');
 
@@ -32,9 +33,10 @@ function allProtectedCheck(currentPlayer, game){
  *      Success - if everything ok
  *      (Error message) - else
 */
-function move(game, card, currentPlayer, relatedInfoObj, cardResponse) {
+function move(game, cardObj, currentPlayer, relatedInfoObj, cardResponse) {
     try {
         relatedInfoObj = infoHandler(relatedInfoObj, currentPlayer, game);
+        let card = convertObjToCard(cardObj);
         if (game.turningPlayer().socketId === currentPlayer.socketId
             && game.turningPlayer().isCardMine(card)
             && deck.isExist(card, game.allCards)) {
@@ -67,6 +69,14 @@ function move(game, card, currentPlayer, relatedInfoObj, cardResponse) {
 
 }
 
+
+
+function convertObjToCard(cardObj){
+    let cardClass = new Card(cardObj.name, cardObj.power);
+    cardClass.id = cardObj.id;
+    cardClass.playerId = cardObj.playerId;
+    return cardClass;
+}
 
 function hasSelfPlayableCard(player){
     player.cards.forEach(card => {

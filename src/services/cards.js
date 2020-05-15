@@ -4,8 +4,8 @@ const score = require('./score');
 * If guessed card is exist in target player returns card, otherwise null
 */
 function guard(targetPlayer, guessedCardPower, game) {
-    if(targetPlayer.cards.find(c => c.power == guessedCardPower)){
-        return score.loose(game,targetPlayer);
+    if (targetPlayer.cards.find(c => c.power == guessedCardPower)) {
+        return score.loose(game, targetPlayer);
     }
     return null;
 }
@@ -29,13 +29,11 @@ function baron(targetPlayer, currentPlayer, game) {
     currentPlayer.cards.forEach(element => {
         currentPlayerPoints += element.power;
     });
-    if (currentPlayerPoints > targetPlayerPoints)
-    {
-        return score.loose(game,targetPlayer);
+    if (currentPlayerPoints > targetPlayerPoints) {
+        return score.loose(game, targetPlayer);
     }
-    else if(currentPlayerPoints < targetPlayerPoints)
-    {
-        return score.loose(game,currentPlayer);
+    else if (currentPlayerPoints < targetPlayerPoints) {
+        return score.loose(game, currentPlayer);
     }
     return null;
 }
@@ -44,10 +42,10 @@ function baron(targetPlayer, currentPlayer, game) {
 *  Player cannot be affected by any other player's card until the next turn.
 */
 function handmaid(currentPlayer, game) {
-    try{
+    try {
         game.activePlayers.find(p => p.id === currentPlayer.id).protected = true;
         return true;
-    }catch(err){
+    } catch (err) {
         console.error(err);
         return false;
     }
@@ -55,17 +53,17 @@ function handmaid(currentPlayer, game) {
 
 
 function prince(targetPlayer, game) {
-    try{
-        discardHand(targetPlayer, game);
-        let drawCard = deck.drawCardFromDeck(game.cardDeck);
-        if(game.activePlayers.find(p => p.id === targetPlayer.id))
-            if(drawCard)
+    try {
+        if (discardHand(targetPlayer, game)) {
+            let drawCard = deck.drawCardFromDeck(game.cardDeck);
+            if (drawCard)
                 game.activePlayers.find(p => p.id === targetPlayer.id).addCard(drawCard.setPlayerId(targetPlayer.id));
             else
                 game.activePlayers.find(p => p.id === targetPlayer.id).addCard(game.reservedCard.setPlayerId(targetPlayer.id));
+        }
 
         return targetPlayer.id;
-    }catch(err){
+    } catch (err) {
         console.error(err);
         return null;
     }
@@ -74,9 +72,9 @@ function prince(targetPlayer, game) {
 function discardHand(targetPlayer, game) {
     try {
         targetPlayer.cards.forEach(card => {
-            if (card.name === "Princess"){
+            if (card.power === 8) {
                 princess(targetPlayer, game);
-                return true;
+                return false;
             }
         });
         game.activePlayers.find(p => p.id === targetPlayer.id).cards = [];
@@ -90,14 +88,14 @@ function discardHand(targetPlayer, game) {
 
 
 function king(targetPlayer, currentPlayer, game) {
-    try{
+    try {
         let opponentCards = targetPlayer.cards;
         game.activePlayers.find(p => p.id === targetPlayer.id).cards = currentPlayer.cards;
         game.activePlayers.find(p => p.id === targetPlayer.id).cards.forEach(c => c.playerId = targetPlayer.id);
         game.activePlayers.find(p => p.id === currentPlayer.id).cards = opponentCards;
         game.activePlayers.find(p => p.id === currentPlayer.id).cards.forEach(c => c.playerId = currentPlayer.id);
         return true;
-    }catch(err){
+    } catch (err) {
         console.error(err);
         return false;
     }
@@ -109,13 +107,13 @@ function countess() {
 
 
 function princess(currentPlayer, game) {
-    try{
-        return score.loose(game,currentPlayer);
-    }catch(err){
+    try {
+        return score.loose(game, currentPlayer);
+    } catch (err) {
         console.error(err);
         return null;
     }
 }
 
 
-module.exports = { guard, priest, baron, handmaid, prince, king, princess, countess}
+module.exports = { guard, priest, baron, handmaid, prince, king, princess, countess }
