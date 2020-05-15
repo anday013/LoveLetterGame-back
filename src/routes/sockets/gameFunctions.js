@@ -16,7 +16,7 @@ const initializeGame = (io, room) => {
 function initialActions(game, io) {
     game.cardDeck = deck.prepareDeck(game.room.maxPlayers);
     game.allCards = game.cardDeck.slice();
-    game.reservedCard = deck.drawCardFromDeck(cardDeck);
+    game.reservedCard = deck.drawCardFromDeck(game.cardDeck);
     
     if (game.room.maxPlayers == 2)
         twoPlayerMod(game.cardDeck);
