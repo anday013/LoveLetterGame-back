@@ -59,8 +59,8 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
             switch (moveResult) {
                 case "Success":
                     moveResponse = new Response(moveResult, 200);
-                    let winner;
-                    if ((winner = gameFunctions.checkForWiner(currentGame))) {
+                    let winner = gameFunctions.checkForWinner(currentGame);
+                    if (winner) {
                         io.to(currentGame.room.name).emit('win', new Response("Win", 200, winner));
                         gameFunctions.sendPlayersWithoutCards(currentGame.activePlayers, io, currentGame);
                         currentGame = gameFunctions.newRound(currentGame, io);
