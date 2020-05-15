@@ -115,4 +115,5 @@ function sendPlayerCards(player, io) {
     if (player)
         io.to(player.socketId).emit('my-cards', new Response("Your cards...", 200, player.cards));
 }
+
 module.exports = { initializeGame,  nextStep, newRound, checkForWinner, sendPlayersWithoutCards}
