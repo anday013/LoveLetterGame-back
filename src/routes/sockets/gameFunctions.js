@@ -50,7 +50,7 @@ function checkForWinner(game) {
         return comparePlayersHand(game.activePlayers, game);
     }
     game.activePlayers.forEach(p => {
-        if(p.score >= game.maxScore)
+        if(p.score === game.maxScore)
             return p;
     })
     return null;

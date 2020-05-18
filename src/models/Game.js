@@ -26,12 +26,4 @@ module.exports = class Game{
     leaveRound(looser){
         this.activePlayers.splice(this.activePlayers.indexOf(looser), 1);
     }
-    isGameEnd(){
-        game.activePlayers.forEach(p => {
-            if(p.score >= game.maxScore)
-                return p;
-        })
-        return null;
-    }
-
 }
