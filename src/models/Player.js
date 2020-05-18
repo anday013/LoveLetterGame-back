@@ -7,6 +7,7 @@ module.exports = class Player{
         this.socketId = socketId;
         this.cards = [];
         this.discardedCards = [];
+        this.cardsCount = 0;
         this.protected = false;
     }
     addCard(card){
@@ -30,5 +31,8 @@ module.exports = class Player{
         this.cards = [];
         this.discardedCards = [];
         this.protected = false;
+    }
+    cardsCounter(){
+        this.cardsCount = this.cards.length;
     }
 }

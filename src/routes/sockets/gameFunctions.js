@@ -88,6 +88,8 @@ function sendPlayersWithoutCards(players, io, game){
         p_copy.id = p.id;
         p_copy.discardedCards = p.discardedCards;
         p_copy.protected = p.protected;
+        p.cardsCounter();
+        p_copy.cardsCount = p.cardsCount;
         players_copy.push(p_copy);
     });
     io.to(game.room.name).emit('active-players', new Response("Active players",200, players_copy))

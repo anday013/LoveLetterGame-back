@@ -89,10 +89,10 @@ function discardHand(targetPlayer, game) {
 
 function king(targetPlayer, currentPlayer, game) {
     try {
-        let opponentCards = targetPlayer.cards;
-        game.activePlayers.find(p => p.id === targetPlayer.id).cards = currentPlayer.cards;
+        let opponentCards = targetPlayer.cards.slice();
+        game.activePlayers.find(p => p.id === targetPlayer.id).cards = currentPlayer.cards.slice();
         game.activePlayers.find(p => p.id === targetPlayer.id).cards.forEach(c => c.playerId = targetPlayer.id);
-        game.activePlayers.find(p => p.id === currentPlayer.id).cards = opponentCards;
+        game.activePlayers.find(p => p.id === currentPlayer.id).cards = opponentCards.slice();
         game.activePlayers.find(p => p.id === currentPlayer.id).cards.forEach(c => c.playerId = currentPlayer.id);
         return true;
     } catch (err) {
