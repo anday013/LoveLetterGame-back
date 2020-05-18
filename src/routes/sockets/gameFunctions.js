@@ -33,7 +33,7 @@ function newRound(game, io) {
     game.activePlayers = game.players.slice();
     initialActions(game, io);
     let winner;
-    if((winner = game.checkForWinner()))
+    if((winner = checkForWinner(game)))
         io.to(game.room.name).emit('game-end', new Response("Game end", 200, winner))
     
 
