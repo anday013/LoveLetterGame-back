@@ -42,6 +42,7 @@ function move(game, cardObj, currentPlayer, relatedInfoObj, cardResponse) {
         if (game.turningPlayer().socketId === currentPlayer.socketId
             && game.turningPlayer().isCardMine(card)
             && deck.isExist(card, game.allCards)) {
+            currentPlayer.protected = false;
             if(protectionCheck(relatedInfoObj) && allProtectedCheck(currentPlayer, game))
                 return "Protected";
 
@@ -51,7 +52,6 @@ function move(game, cardObj, currentPlayer, relatedInfoObj, cardResponse) {
                 return "Wrong card played";
             if(relatedInfoObj.targetPlayerId === currentPlayer.id && !card.isSelfPlayable())
                 return "Card is not self playable";
-            currentPlayer.protected = false;
             game.turningPlayer().removeCard(card);
             if(allProtectedCheck(currentPlayer, game) || card.isSelfPlayable())
                 cardResponse.result = cardSeperator(card, relatedInfoObj, game);
