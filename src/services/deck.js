@@ -37,10 +37,7 @@ function makeCardDeck(numOfPlayers) {
          * There are 16 cards in the deck:
          * 5 Guard,2 Priest, 2 Baron, 2 Handmaid, 2 Prince, 1 King, 1 Countess and 1 Princess
          */
-        for (let i = 0; i < 4; i++) {
-            cardDeck.push(new Card("Guard", 1));
-        }
-        cardDeck.push(new Card("Priest", 2), new Card("Baron", 3), new Card("Handmaid", 4), new Card("Prince", 5));
+        cardDeck.push(new Card("Guard", 1), new Card("Priest", 2), new Card("Guard", 1), new Card("Baron", 3), new Card("Handmaid", 4), new Card("Guard", 1), new Card("Prince", 5), new Card("Guard", 1));
     return cardDeck;
 }
 
