@@ -49,7 +49,7 @@ function makeCardDeck(numOfPlayers) {
 
 const prepareDeck = (numOfPlayers) => {
     let cardDeck = makeCardDeck(numOfPlayers);
-    for (let index = 0; index < 10; index++) {
+    for (let index = 0; index < 50; index++) {
         shuffle(cardDeck);
     }
     return cardDeck;
