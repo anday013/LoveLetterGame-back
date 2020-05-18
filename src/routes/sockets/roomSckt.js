@@ -94,6 +94,10 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
                     playedCard.status = 303;
                     gameFunctions.nextStep(currentGame, io);
                     break;
+                case "Wrong target player id":
+                    moveResponse = new Response(moveResult, 304);
+                    playedCard.status = 304;
+                    break;
             }
             io.to(currentGame.room.name).emit('played-card', playedCard);
             io.to(currentPlayer.socketId).emit('turn-result', moveResponse);

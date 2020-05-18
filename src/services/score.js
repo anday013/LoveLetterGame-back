@@ -5,10 +5,10 @@ const win = (game, player) => {
         game.moveOrderId = winner.id;
         return winner;
     } catch (error) {
-        console.error(error)
+        console.error(error);
         return null;
     }
-}
+};
 
 
 const loose = (game, player) => {
@@ -17,10 +17,10 @@ const loose = (game, player) => {
         game.leaveRound(player);
         return player;
     } catch (error) {
-        console.error(error)
+        console.error(error);
         return null;
     }
-}
+};
 
 
-module.exports = { win, loose }
+module.exports = { win, loose };

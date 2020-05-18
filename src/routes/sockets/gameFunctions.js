@@ -33,9 +33,9 @@ function newRound(game, io) {
     game.activePlayers = game.players.slice();
     initialActions(game, io);
     let winner;
-    if((winner = checkForWinner(game)))
+    if((winner = game.isGameEnd()))
         io.to(game.room.name).emit('game-end', new Response("Game end", 200, winner))
-    
+
 
     return game;
 
@@ -44,15 +44,11 @@ function newRound(game, io) {
 
 
 function checkForWinner(game) {
-    if (game.activePlayers.length == 1) {
+    if (game.activePlayers.length === 1) {
         return score.win(game, game.activePlayers[0]);
     } else if (!game.cardDeck.length) {
         return comparePlayersHand(game.activePlayers, game);
     }
-    game.activePlayers.forEach(p => {
-        if(p.score === game.maxScore)
-            return p;
-    })
     return null;
 }
 

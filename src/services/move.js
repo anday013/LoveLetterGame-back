@@ -5,8 +5,11 @@ const { guard, priest, baron, handmaid, prince, king, princess, countess} = requ
 
 function infoHandler(relatedInfoObj, currentPlayer, game) {
     relatedInfoObj.currentPlayer = currentPlayer;
-    if(relatedInfoObj.hasOwnProperty('targetPlayerId'))
-        relatedInfoObj.targetPlayer = game.findPlayerById(relatedInfoObj.targetPlayerId);
+    if(relatedInfoObj.hasOwnProperty('targetPlayerId')){
+        if(!(relatedInfoObj.targetPlayer = game.findPlayerById(relatedInfoObj.targetPlayerId)))
+            return null;
+    }
+
     if(relatedInfoObj.hasOwnProperty('guessedCardPower'))
         relatedInfoObj.guessedCardPower = Number(relatedInfoObj.guessedCardPower);
     return relatedInfoObj;
@@ -37,7 +40,8 @@ function allProtectedCheck(currentPlayer, game){
 */
 function move(game, cardObj, currentPlayer, relatedInfoObj, cardResponse) {
     try {
-        relatedInfoObj = infoHandler(relatedInfoObj, currentPlayer, game);
+        if(!(relatedInfoObj = infoHandler(relatedInfoObj, currentPlayer, game)))
+                return "Wrong target player id";
         let card = convertObjToCard(cardObj);
         if (game.turningPlayer().socketId === currentPlayer.socketId
             && game.turningPlayer().isCardMine(card)
