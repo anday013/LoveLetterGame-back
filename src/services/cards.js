@@ -77,6 +77,9 @@ function discardHand(targetPlayer, game) {
                 return false;
             }
         });
+        game.activePlayers.find(p => p.id === targetPlayer.id).cards.forEach(c => {
+            game.activePlayers.find(p => p.id === targetPlayer.id).discardedCards.push(c);
+        });
         game.activePlayers.find(p => p.id === targetPlayer.id).cards = [];
         return true;
 
