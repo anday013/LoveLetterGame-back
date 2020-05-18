@@ -11,7 +11,7 @@ module.exports = class Game{
         if(room.players.length === 3)
             this.maxScore = 5;
         else if(room.players.length === 2)
-            this.maxScore = 2;
+            this.maxScore = 7;
     }
 
     findPlayerById(playerId){
