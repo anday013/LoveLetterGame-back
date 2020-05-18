@@ -33,10 +33,6 @@ function makeCardDeck(numOfPlayers) {
     const cards = makeCards();
     const cardDeck = [];
     cardDeck.push(cards.guard, cards.priest, cards.baron, cards.handmaid, cards.prince, cards.king, cards.countess, cards.princess);
-    if (numOfPlayers == 2) {
-
-    }
-    else if (numOfPlayers == 4) {
         /*
          * There are 16 cards in the deck:
          * 5 Guard,2 Priest, 2 Baron, 2 Handmaid, 2 Prince, 1 King, 1 Countess and 1 Princess
@@ -45,9 +41,6 @@ function makeCardDeck(numOfPlayers) {
             cardDeck.push(new Card("Guard", 1));
         }
         cardDeck.push(new Card("Priest", 2), new Card("Baron", 3), new Card("Handmaid", 4), new Card("Prince", 5));
-    } else
-        throw new Error("Invalid number of players");
-
     return cardDeck;
 }
 

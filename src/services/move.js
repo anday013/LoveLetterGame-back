@@ -49,6 +49,8 @@ function move(game, cardObj, currentPlayer, relatedInfoObj, cardResponse) {
                 return "All players protected but you have self playable card";
             if(currentPlayer.cards.find(c => (c.power === 7)) &&  (card.power === 5 || card.power === 6))
                 return "Wrong card played";
+            if(relatedInfoObj.targetPlayerId === currentPlayer.id && !card.isSelfPlayable())
+                return "Card is not self playable";
             currentPlayer.protected = false;
             game.turningPlayer().removeCard(card);
             if(allProtectedCheck(currentPlayer, game) || card.isSelfPlayable())
@@ -84,7 +86,7 @@ function hasSelfPlayableCard(player){
     player.cards.forEach(card => {
         if(card.isSelfPlayable())
             return true;
-    }); 
+    });
     return false;
 }
 
@@ -113,7 +115,7 @@ const cardSeperator = (card, relatedInfo, game) => {
             case 7:
                 return countess();
             case 8:
-                return princess(relatedInfo.currentPlayer, game)
+                return princess(relatedInfo.currentPlayer, game);
             default:
                 break;
         }
@@ -122,7 +124,7 @@ const cardSeperator = (card, relatedInfo, game) => {
     } catch (err) {
         console.error(err)
     }
-}
+};
 
 
 
@@ -140,4 +142,4 @@ function nextPlayerId(moveOrderId, players) {
 
 
 
-module.exports = move
+module.exports = move;

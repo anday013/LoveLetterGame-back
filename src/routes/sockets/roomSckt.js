@@ -68,7 +68,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
                         return;
                     }
 
-                    gameFunctions.nextStep(currentGame, currentGame.cardDeck, io);
+                    gameFunctions.nextStep(currentGame, io);
                     break;
                 case "It's not your turn":
                     moveResponse = new Response(moveResult);
@@ -82,6 +82,10 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
                     moveResponse = new Response(moveResult, 500);
                     playedCard.status = 500;
                     break;
+                case "Card is not self playable":
+                    moveResponse = new Response(moveResult, 302);
+                    playedCard.status = 302;
+                    break;
                 case "All players protected but you have self playable card":
                     moveResponse = new Response(moveResult, 309);
                     playedCard.status = 309;
@@ -89,7 +93,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
                 case "All players protected":
                     moveResponse = new Response(moveResult, 303);
                     playedCard.status = 303;
-                    gameFunctions.nextStep(currentGame, currentGame.cardDeck, io);
+                    gameFunctions.nextStep(currentGame, io);
                     break;
             }
             io.to(currentGame.room.name).emit('played-card', playedCard);

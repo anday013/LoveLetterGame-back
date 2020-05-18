@@ -18,14 +18,14 @@ function initialActions(game, io) {
     game.allCards = game.cardDeck.slice();
     game.reservedCard = deck.drawCardFromDeck(game.cardDeck);
 
-    if (game.room.maxPlayers == 2)
-        twoPlayerMod(game.cardDeck);
+    if (game.room.maxPlayers === 2)
+        twoPlayerMod(game);
 
 
     game.players.forEach(player => {
-        drawCardForPlayer(player, game.cardDeck);
+        drawCardForPlayer(player, game);
     });
-    nextStep(game, game.cardDeck, io);
+    nextStep(game, io);
 }
 ///////////////////////////////////////////////////
 function newRound(game, io) {
@@ -71,10 +71,10 @@ function comparePlayersHand(players, game) {
 }
 
 
-function nextStep(game, cardDeck, io) {
-    if (!cardDeck.length)
+function nextStep(game, io) {
+    if (!game.cardDeck.length)
         return false;
-    drawCardForPlayer(game.turningPlayer(), cardDeck);
+    drawCardForPlayer(game.turningPlayer(), game);
     sendGameCards(game, io);
     io.to(game.room.name).emit('move-order', new Response("Turn player id", 200, game.moveOrderId));
     return true;
@@ -95,13 +95,13 @@ function sendPlayersWithoutCards(players, io, game){
 
 //////////////////////////////////
 
-function twoPlayerMod(cardDeck) {
+function twoPlayerMod(game) {
     for (let i = 0; i < 3; i++)
-        deck.drawCardFromDeck(cardDeck)
+        deck.drawCardFromDeck(game.cardDeck)
 }
 
-function drawCardForPlayer(player, cardDeck) {
-    player.addCard(deck.drawCardFromDeck(cardDeck).setPlayerId(player.id))
+function drawCardForPlayer(player, game) {
+    player.addCard(deck.drawCardFromDeck(game.cardDeck).setPlayerId(player.id))
 }
 
 function sendGameCards(game, io) {
