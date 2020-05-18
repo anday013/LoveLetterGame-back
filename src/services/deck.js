@@ -50,7 +50,7 @@ function makeCardDeck(numOfPlayers) {
 const prepareDeck = (numOfPlayers) => {
     let cardDeck = makeCardDeck(numOfPlayers);
     for (let index = 0; index < 50; index++) {
-        shuffle(cardDeck);
+        cardDeck = shuffle(cardDeck);
     }
     return cardDeck;
 }
@@ -74,7 +74,22 @@ function drawCardFromDeck(cardDeck) {
  * Shuffle a card deck
  */
 function shuffle(array) {
-    array.sort(() => Math.random() - 0.5);
+    var currentIndex = array.length, temporaryValue, randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+  
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+  
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+  
+    return array;
 }
 
 
