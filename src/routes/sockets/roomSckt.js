@@ -98,7 +98,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
             }
             io.to(currentGame.room.name).emit('played-card', playedCard);
             io.to(currentPlayer.socketId).emit('turn-result', moveResponse);
-            if (card.power === 2)
+            if (card.power === 2 && playedCard.status === 200)
                 io.to(currentPlayer.socketId).emit('card-priest', new Response("card-priest", 200, { targetPlayerId: relatedInfo.targetPlayerId, cardResponseResult: cardResponse.result }));
             gameFunctions.sendPlayersWithoutCards(currentGame.activePlayers, io, currentGame)
             // io.to(currentGame.room.name).emit('player-lost', new Response("Lost",200, playerObj))
