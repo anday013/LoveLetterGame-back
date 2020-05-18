@@ -32,7 +32,7 @@ function newRound(game, io) {
     game.players.forEach(p => p.reset());
     game.activePlayers = game.players.slice();
     initialActions(game, io);
-    let winner = game.isGameEnd();
+    let winner = game.checkForWinner();
     if(winner)
         io.to(game.room.name).emit('game-end', new Response("Game end", 200, winner))
     
