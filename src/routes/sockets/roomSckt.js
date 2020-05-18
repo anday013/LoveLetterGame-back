@@ -67,7 +67,6 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
                         io.to(currentGame.room.name).emit("update-room", new Response("", 200, currentGame.room.players));
                         return;
                     }
-
                     gameFunctions.nextStep(currentGame, io);
                     break;
                 case "It's not your turn":

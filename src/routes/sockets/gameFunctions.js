@@ -32,10 +32,10 @@ function newRound(game, io) {
     game.players.forEach(p => p.reset());
     game.activePlayers = game.players.slice();
     initialActions(game, io);
-    let winner;
-    if((winner = checkForWinner(game))){
+    let winner = game.isGameEnd();
+    if(winner)
         io.to(game.room.name).emit('game-end', new Response("Game end", 200, winner))
-    }
+    
 
     return game;
 
@@ -50,7 +50,7 @@ function checkForWinner(game) {
         return comparePlayersHand(game.activePlayers, game);
     }
     game.activePlayers.forEach(p => {
-        if(p.score === game.maxScore)
+        if(p.score >= game.maxScore)
             return p;
     })
     return null;

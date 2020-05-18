@@ -11,7 +11,7 @@ module.exports = class Game{
         if(room.players.length === 3)
             this.maxScore = 5;
         else if(room.players.length === 2)
-            this.maxScore = 7;
+            this.maxScore = 2;
     }
 
     findPlayerByName(playerName){
@@ -25,6 +25,13 @@ module.exports = class Game{
     }
     leaveRound(looser){
         this.activePlayers.splice(this.activePlayers.indexOf(looser), 1);
+    }
+    isGameEnd(){
+        game.activePlayers.forEach(p => {
+            if(p.score >= game.maxScore)
+                return p;
+        })
+        return null;
     }
 
 }
