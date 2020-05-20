@@ -29,7 +29,7 @@ app.use(express.urlencoded({
     extended: true
 }))
 // Define Routes
-// app.use('/api/auth', require('./src/routes/api/auth'));
+app.use('/api/auth', require('./src/routes/api/auth'));
 // app.use(express.static(__dirname + '/../Front'));
 app.use('/', apiRoutes);
 
