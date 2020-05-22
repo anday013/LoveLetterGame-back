@@ -53,7 +53,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
             if (!currentGame)
                 return;
             let cardResponse = {};
-            let playedCard = new Response("Played card", 200, { fromPlayer: currentPlayer.id, cardPower: card.power, toPlayer: relatedInfo.targetPlayerId});
+            let playedCard = new Response("Played card", 200, { fromPlayer: currentPlayer.id, cardPower: card.power, toPlayer: relatedInfo.targetPlayerId });
             const moveResult = move(currentGame, card, currentGame.findPlayerById(currentPlayer.id), relatedInfo, cardResponse);
             let moveResponse;
             switch (moveResult) {
@@ -63,6 +63,7 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
                     if (winner) {
                         io.to(currentGame.room.name).emit('win', new Response("Win", 200, winner));
                         gameFunctions.sendPlayersWithoutCards(currentGame.activePlayers, io, currentGame);
+                        cardResponse = null;
                         currentGame = gameFunctions.newRound(currentGame, io);
                         io.to(currentGame.room.name).emit("update-room", new Response("", 200, currentGame.room.players));
                         break;
@@ -103,6 +104,12 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
             io.to(currentPlayer.socketId).emit('turn-result', moveResponse);
             if (card.power === 2 && playedCard.status === 200)
                 io.to(currentPlayer.socketId).emit('card-priest', new Response("card-priest", 200, { targetPlayerId: relatedInfo.targetPlayerId, cardResponseResult: cardResponse.result }));
+            if (card.power === 1 && playedCard.status === 200 && cardResponse.result)
+                io.to(currentGame.room.name).emit('loose', new Response("loose", 200, cardResponse.result));
+            if (card.power === 3 && playedCard.status === 200 && cardResponse.result)
+                io.to(currentGame.room.name).emit('loose', new Response("loose", 200, cardResponse.result));
+            if (card.power === 8 && playedCard.status === 200 && cardResponse.result)
+                io.to(currentGame.room.name).emit('loose', new Response("loose", 200, cardResponse.result));
             gameFunctions.sendPlayersWithoutCards(currentGame.activePlayers, io, currentGame)
         }
         catch (error) {
