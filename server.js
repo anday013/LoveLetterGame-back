@@ -12,11 +12,9 @@ console.log("Server runnig on port: " + process.env.PORT);
 app.use(express.urlencoded({
     extended: true
 }))
-
-app.use(express.static(__dirname + '/../Front'));
-
+// app.use(express.static(__dirname + '/../Front'));
 app.use('/', apiRoutes);
 
 sockets.init(server);
 
-
+module.exports = server;

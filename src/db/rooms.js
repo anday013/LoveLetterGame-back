@@ -1,5 +1,4 @@
 const fs = require('fs');
-const filename = './src/db/rooms.txt';
 const Room = require('../models').Room;
 const Player = require('../models').Player;
 const path = require('path');

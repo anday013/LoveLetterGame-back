@@ -1,4 +1,5 @@
-const deck = require('./').deck;
+const deck = require('./deck');
+const score = require('./score');
 /*
  * If guessed card is exist in target player returns card, otherwise null
  */
