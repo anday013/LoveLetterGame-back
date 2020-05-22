@@ -8,32 +8,50 @@ testRoom.name = 'Test Room';
 let updatedRoom = new Room('Updated', 'Waiting', 3);
 updatedRoom.name = 'Updated';
 
+dbRooms.changePath('/roomstest.txt');
+
 describe('Rooms DB', function () {
   //readAll()
-  it('readAll() function should return Array type', function () {
-    assert.isArray(dbRooms.readAll(), 'Return is array.');
+  it('readAll() function should return Array type', async function () {
+    assert.isArray(await dbRooms.readAll(), 'Return is array.');
   });
   //write()
-  it('write() function should return type Boolean', function () {
-    assert.typeOf(dbRooms.write(testRoom), 'Boolean');
+  it('write() function should return type Boolean', async function () {
+    assert.typeOf(await dbRooms.write(testRoom), 'Boolean');
   });
-  it('write() function should return true', function () {
-    assert.equal(dbRooms.write(testRoom), true);
+  it('write() function should return true', async function () {
+    assert.equal(await dbRooms.write(testRoom), true);
   });
   //find()
-  it('find() function should return type object', function () {
-    assert.typeOf(dbRooms.find('247e848ead0d33cf45af875459766344'), 'object');
-  });
-
-  //remove()
-  it('remove() function should be Okay after process', function () {
-    assert.isOk(
-      dbRooms.remove('43e3c54eb3b60940280cc5e81cd90581'),
-      '43e3c54eb3b60940280cc5e81cd90581 id room removed'
+  it('find() function should return type object', async function () {
+    assert.typeOf(
+      await dbRooms.find('962d7491e8ba960315fb4694a06cc9ca'),
+      'object'
     );
   });
-  //update()
-  it('update() function should be Okay after process', function () {
-    assert.isOk(dbRooms.update(testRoom, updatedRoom), 'Room updated');
+
+  //find2()
+  it('find2() function must return object id same with find id', async function () {
+    const room = await dbRooms.find('962d7491e8ba960315fb4694a06cc9ca');
+    assert.equal(
+      room.id,
+      '962d7491e8ba960315fb4694a06cc9ca',
+      'room id equal to id'
+    );
   });
+
+  //   //remove()
+  //   it('remove() function should be Okay after process', async function () {
+  //     assert.equal(
+  //       await dbRooms.remove('412d5cf072af02e43f6a5e5134c3bee9'),
+  //       true
+  //       '412d5cf072af02e43f6a5e5134c3bee9 id room removed'
+  //     );
+  //   });
+  //   //update()
+  //   it('update() function should be Okay after process', async function () {
+  //     assert.equal(await dbRooms.update(testRoom, updatedRoom), true ,'Room updated');
+  //   });
 });
+
+dbRooms.changePath('/rooms.txt');
