@@ -6,6 +6,8 @@ const Score = require('../src/services/score');
 const Deck = require('../src/services/deck');
 const Cards = require('../src/services/cards');
 
+const GameFunctions = require('../src/routes/sockets/gameFunctions');
+
 const Room = require('../src/models').Room;
 const Game = require('../src/models').Game;
 
@@ -21,7 +23,6 @@ describe('Tests for: score.js Services', async function () {
   it('win() function should return player.points+1 ', async function () {
     const player = game.players[0];
     player.points++;
-    console.log(player);
     const winner = Score.win(game, game.players[0]);
     // expect(stub.calledOnce).to.be.true;
     expect(winner.id).to.equal(player.id);
@@ -33,7 +34,6 @@ describe('Tests for: score.js Services', async function () {
   it('loose() function should return player:  player.points-1 ', async function () {
     const player = game.players[0];
     player.points--;
-    console.log(player);
     const loser = Score.loose(game, game.players[0]);
     expect(loser.id).to.equal(player.id);
     expect(loser.nickname).to.equal(player.nickname);
@@ -46,7 +46,6 @@ describe('Tests for: score.js Services', async function () {
 describe('Tests for: deck.js Services', async function () {
   //makeCards()
   const testDeck = Deck.prepareDeck();
-  console.log(testDeck);
   it('prepareDeck() function should return 12 cards', async function () {
     expect(testDeck).to.not.have.lengthOf(16); //bax buna
   });
@@ -63,8 +62,8 @@ describe('Tests for: cards.js Services', async function () {
   const game = await initializeGame();
   const player1 = game.players[0];
   const player2 = game.players[1];
+
   it("guard() function should return null if don't guessed correctly", async function () {
-    console.log('cards' + player1.cards);
     const res = Cards.guard(player1, 2, game);
     expect(res).to.be.null; //bax buna
   });
@@ -79,11 +78,7 @@ describe('Tests for: cards.js Services', async function () {
   it('handmaid() function should return true', async function () {
     expect(Cards.handmaid(player1, game)).to.be.true;
   });
-  it('prince() function should return id of targetplayer or null', async function () {
-    const res = Cards.prince(player2, game);
-    const id = player2.id;
-    expect(res).to.be.a('null');
-  });
+
   it('king() function should return true if  cards swapped', async function () {
     const res = Cards.king(player1, player2, game);
     expect(res).to.be.true;
