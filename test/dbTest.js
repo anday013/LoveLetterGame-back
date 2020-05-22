@@ -54,4 +54,4 @@ describe('Rooms DB', function () {
   //   });
 });
 
-dbRooms.changePath('/rooms.txt');
+// dbRooms.changePath('/rooms.txt');
