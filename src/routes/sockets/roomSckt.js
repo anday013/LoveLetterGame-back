@@ -65,6 +65,8 @@ module.exports = roomSckt = (io, socket, currentPlayer) => {
                         gameFunctions.sendPlayersWithoutCards(currentGame.activePlayers, io, currentGame);
                         cardResponse = null;
                         currentGame = gameFunctions.newRound(currentGame, io);
+                        if(!currentGame)
+                            return;
                         io.to(currentGame.room.name).emit("update-room", new Response("", 200, currentGame.room.players));
                         break;
                     }

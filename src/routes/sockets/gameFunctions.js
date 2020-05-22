@@ -4,6 +4,7 @@ const move = require('../../services').move;
 const Game = require('../../models').Game;
 const Response = require('../../models').Response;
 const Player = require('../../models').Player;
+const rooms = require('../../db/').rooms;
 const initializeGame = (io, room) => {
     let newGame = new Game(room);
     initialActions(newGame, io);
@@ -33,14 +34,16 @@ function newRound(game, io) {
     game.activePlayers = game.players.slice();
     initialActions(game, io);
     let winner;
-    if((winner = game.isGameEnd()))
-        io.to(game.room.name).emit('game-end', new Response("Game end", 200, winner))
+    if((winner = game.isGameEnd())){
+        io.to(game.room.name).emit('game-end', new Response("Game end", 200, winner));
+        rooms.remove(game.room.id);
+        game = null;
+    }
 
 
     return game;
 
 }
-
 
 
 function checkForWinner(game) {
