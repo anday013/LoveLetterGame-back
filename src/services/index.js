@@ -1,3 +1,4 @@
 const deck = require('./deck');
 const move = require('./move');
-module.exports = {deck, move}
+const score = require('./score');
+module.exports = {deck, move, score}

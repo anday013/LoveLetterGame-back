@@ -6,15 +6,29 @@ module.exports = class Player{
         this.points = points;
         this.socketId = socketId;
         this.cards = [];
-        this.isProtected = false;
+        this.discardedCards = [];
+        this.protected = false;
     }
     addCard(card){
         this.cards.push(card);
     }
     removeCard(card){
-        this.cards.splice(this.cards.indexOf(card), 1);
+        this.cards.splice(this.cards.findIndex(c => c.id === card.id ), 1);
+        this.discardedCards.push(card);
+    }
+    removeAllCards(){
+        this.cards.forEach(c => this.discardedCards.push(c));
+        this.cards = [];
     }
     setName(name){
         this.nickname = name;
+    }
+    isCardMine(card){
+        return card.playerId === this.id
+    }
+    reset(){
+        this.cards = [];
+        this.discardedCards = [];
+        this.protected = false;
     }
 }
