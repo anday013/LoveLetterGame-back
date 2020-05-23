@@ -11,12 +11,11 @@ function guard(targetPlayer, guessedCardPower, game) {
 }
 
 /*
-* Returns target player cards
-*/
+ * Returns target player cards
+ */
 function priest(targetPlayer) {
     return targetPlayer.cards.slice();
 }
-
 
 /*
 * If current player has a stronger hand returns true, otherwise false
@@ -51,6 +50,19 @@ function handmaid(currentPlayer, game) {
     }
 }
 
+function prince(targetPlayer, game) {
+  try {
+    if (discardHand(targetPlayer, game)) {
+      let drawCard = deck.drawCardFromDeck(game.cardDeck);
+      if (drawCard)
+        game.activePlayers
+          .find((p) => p.id === targetPlayer.id)
+          .addCard(drawCard.setPlayerId(targetPlayer.id));
+      else
+        game.activePlayers
+          .find((p) => p.id === targetPlayer.id)
+          .addCard(game.reservedCard.setPlayerId(targetPlayer.id));
+    }
 
 function prince(targetPlayer, game) {
     try {
@@ -118,5 +130,13 @@ function princess(currentPlayer, game) {
     }
 }
 
+function princess(currentPlayer, game) {
+  try {
+    return score.loose(game, currentPlayer);
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+}
 
 module.exports = { guard, priest, baron, handmaid, prince, king, princess, countess }
